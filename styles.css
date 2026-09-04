@@ -314,3 +314,8 @@ html[lang="kk"] .nav a{padding:8px 8px;font-size:12.5px}
   .tk-in{animation:none}
   *{transition-duration:0s!important;animation-duration:0s!important}
 }
+
+.ksoc{display:inline-flex;align-items:center;gap:8px;margin-top:18px;color:var(--olive2);font:600 13px/1 var(--ft);text-decoration:none;transition:color .25s}
+.ksoc:hover{color:#fff}
+.fsoc{display:inline-flex;align-items:center;gap:7px;margin-top:10px;color:rgba(255,255,255,.62);font:600 12px/1 var(--ft);text-decoration:none;transition:color .25s}
+.fsoc:hover{color:#fff}
