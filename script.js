@@ -164,6 +164,7 @@ function applyLang(lang){
   try { localStorage.setItem("tc-lang", kk ? "kk" : "ru"); } catch(e){}
   setWaLinks();
   fillTicker();
+  renderPrices();
   requestAnimationFrame(fitText);
 }
 function initLang(){
@@ -352,6 +353,97 @@ if (HAS_IO) {
   apply("all");
 })();
 
+/* ---------------- ЦЕНЫ ИЗ GOOGLE-ТАБЛИЦЫ ----------------
+   Клиент правит цены в таблице, сайт читает её как CSV через gviz.
+   Порядок источников: кэш браузера (мгновенно) → таблица → prices.json (запасной
+   прайс в репозитории, если Google недоступен).
+   Пустая цена в таблице = карточка остаётся с кнопкой «Узнать цену», как было. */
+var SHEET_ID = "1AbBgREgX2MLUHYeX2G1glIKPGVmRj0ShowH6ojxAP1k";
+var SHEET_CSV = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&gid=0";
+var PRICES = null;                       /* артикул → {v: число, u: единица, ot: «от»} */
+var UNIT = {
+  ru: {"за кг":"₸/кг", "за тару":"₸ за тару", "за шт":"₸/шт", "за литр":"₸/л"},
+  kk: {"за кг":"₸/кг", "за тару":"₸ ыдыс үшін", "за шт":"₸/дана", "за литр":"₸/л"}
+};
+var ORDER_TXT = {ru:"Заказать", kk:"Тапсырыс беру"};
+
+/* CSV с кавычками и переводами строк внутри ячеек */
+function csvRows(t){
+  var rows = [], row = [], cur = "", q = false;
+  t = t.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  for (var i = 0; i < t.length; i++){
+    var c = t.charAt(i);
+    if (q){
+      if (c === '"'){ if (t.charAt(i + 1) === '"'){ cur += '"'; i++; } else q = false; }
+      else cur += c;
+    }
+    else if (c === '"') q = true;
+    else if (c === ","){ row.push(cur); cur = ""; }
+    else if (c === "\n"){ row.push(cur); rows.push(row); row = []; cur = ""; }
+    else cur += c;
+  }
+  if (cur !== "" || row.length){ row.push(cur); rows.push(row); }
+  return rows;
+}
+function parsePrices(rows){
+  var map = {};
+  rows.forEach(function(r){
+    var sku = (r[0] || "").trim();
+    if (!sku || sku === "Артикул") return;
+    var raw = (r[3] || "").replace(/[\s ]/g, "").replace(",", ".").replace(/[^\d.]/g, "");
+    var v = parseFloat(raw);
+    if (!isFinite(v) || v <= 0) return;
+    map[sku] = {
+      v: v,
+      u: (r[4] || "за кг").trim().toLowerCase(),
+      ot: /^(да|иә|от|yes|true|1)$/i.test((r[5] || "").trim())
+    };
+  });
+  return map;
+}
+function money(n){
+  var r = Math.round(n * 100) / 100;
+  var s = (r % 1 ? r.toFixed(2) : r.toFixed(0)).split("."), int = s[0];
+  return int.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + (s[1] ? "," + s[1] : "");
+}
+function renderPrices(){
+  if (!PRICES) return;
+  var kk = curLang() === "kk", L = kk ? "kk" : "ru";
+  document.querySelectorAll(".card[data-sku]").forEach(function(c){
+    var box = c.querySelector(".pr"); if (!box) return;
+    var btn = c.querySelector("[data-wa-item]"), p = PRICES[c.dataset.sku];
+    if (!p){
+      box.hidden = true;
+      if (btn) btn.innerHTML = pick("b.price", kk);
+      return;
+    }
+    var s = money(p.v) + " " + (UNIT[L][p.u] || UNIT[L]["за кг"]);
+    box.textContent = p.ot ? (kk ? s + " бастап" : "от " + s) : s;
+    box.hidden = false;
+    if (btn) btn.textContent = ORDER_TXT[L];
+  });
+}
+function setPrices(map, save){
+  PRICES = map || {};
+  renderPrices();
+  if (save) try { localStorage.setItem("tc-prices", JSON.stringify({t: Date.now(), d: PRICES})); } catch(e){}
+}
+function loadPrices(){
+  if (!window.fetch) return;
+  try {
+    var c = JSON.parse(localStorage.getItem("tc-prices") || "null");
+    if (c && c.d && Date.now() - c.t < 7 * 864e5) setPrices(c.d, false);
+  } catch(e){}
+  fetch(SHEET_CSV, {cache: "no-store"})
+    .then(function(r){ if (!r.ok) throw 0; return r.text(); })
+    .then(function(t){ setPrices(parsePrices(csvRows(t)), true); })
+    .catch(function(){
+      if (PRICES) return;                                  /* кэш уже показан */
+      fetch("prices.json", {cache: "no-store"}).then(function(r){ return r.json(); })
+        .then(function(d){ setPrices(d, false); }).catch(function(){});
+    });
+}
+
 /* ---------------- ФОРМА → WhatsApp ---------------- */
 var form = document.getElementById("form");
 if (form) form.addEventListener("submit", function(e){
@@ -372,4 +464,5 @@ if (form) form.addEventListener("submit", function(e){
 /* ---------------- СТАРТ ---------------- */
 snapshot();
 initLang();
+loadPrices();
 })();

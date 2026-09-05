@@ -206,6 +206,9 @@ html.no-plate .pw{--f:1;--open:1;--enter:1}
 .cg{font:600 10px/1 var(--ft);letter-spacing:.14em;text-transform:uppercase;color:var(--olive)}
 .cb h3{font:800 16px/1.15 var(--fd);text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
 .cb p{font-size:13px;color:var(--steel);line-height:1.35;flex:1}
+/* цена приезжает из google-таблицы; нет цены - блок скрыт, в футере «Узнать цену» */
+.pr{font:800 17px/1.15 var(--fd);letter-spacing:.01em;color:var(--olive);margin-top:2px}
+.pr[hidden]{display:none}
 .cf{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:10px;border-top:1px solid rgba(20,21,15,.08)}
 .tara{font:600 12px/1 var(--ft);letter-spacing:.04em;color:var(--ink);padding:7px 10px;border-radius:999px;background:rgba(121,119,70,.12);white-space:nowrap}
 .cbtn{font:600 12px/1 var(--ft);color:var(--olive);white-space:nowrap;padding:7px 0;position:relative}
@@ -214,6 +217,7 @@ html.no-plate .pw{--f:1;--open:1;--enter:1}
 @media(max-width:700px){
   .cb{padding:10px 10px 12px}
   .cb h3{font-size:14px}.cb p{font-size:12px}
+  .pr{font-size:15px}
   .cf{flex-direction:column;align-items:stretch}
   .tara{text-align:center}
   .cbtn{text-align:center;padding:8px 0;border:1px solid rgba(121,119,70,.4);border-radius:999px}
