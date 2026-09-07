@@ -204,6 +204,8 @@ html.no-plate .pw{--f:1;--open:1;--enter:1}
 .card:hover .im::after{transform:translateX(70%)}
 .cb{padding:12px 14px 14px;display:flex;flex-direction:column;gap:5px;flex:1;text-align:center}
 .cg{font:600 10px/1 var(--ft);letter-spacing:.14em;text-transform:uppercase;color:var(--olive)}
+/* пустой ярлык: держит высоту, чтобы заголовок карточки не поднялся выше соседей */
+.cg-none{min-height:10px}
 .cb h3{font:800 16px/1.15 var(--fd);text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
 .cb p{font-size:13px;color:var(--steel);line-height:1.35;flex:1}
 /* цена приезжает из google-таблицы; нет цены - блок скрыт, в футере «Узнать цену» */
