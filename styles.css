@@ -211,6 +211,8 @@ html.no-plate .pw{--f:1;--open:1;--enter:1}
 /* цена приезжает из google-таблицы; нет цены - блок скрыт, в футере «Узнать цену» */
 .pr{font:800 17px/1.15 var(--fd);letter-spacing:.01em;color:var(--olive);margin-top:2px}
 .pr[hidden]{display:none}
+/* фильтр каталога прячет карточки атрибутом hidden; без этого правила display:flex у .card перебивает [hidden] */
+.card[hidden]{display:none}
 .cf{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:10px;border-top:1px solid rgba(20,21,15,.08)}
 .tara{font:600 12px/1 var(--ft);letter-spacing:.04em;color:var(--ink);padding:7px 10px;border-radius:999px;background:rgba(121,119,70,.12);white-space:nowrap}
 .cbtn{font:600 12px/1 var(--ft);color:var(--olive);white-space:nowrap;padding:7px 0;position:relative}
