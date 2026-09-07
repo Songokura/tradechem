@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://tradechem.kz/</loc>
-    <lastmod>2026-09-04</lastmod>
+    <loc>https://trade-chem.kz/</loc>
+    <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://tradechem.kz/?lang=ru"/>
-    <xhtml:link rel="alternate" hreflang="kk" href="https://tradechem.kz/?lang=kk"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://trade-chem.kz/?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="kk" href="https://trade-chem.kz/?lang=kk"/>
   </url>
 </urlset>
