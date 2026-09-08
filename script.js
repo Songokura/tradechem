@@ -10,6 +10,23 @@ var RED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 var HAS_IO = typeof IntersectionObserver === "function";
 var root = document.documentElement;
 
+/* ---------------- КОНВЕРСИИ GOOGLE ADS ----------------
+   Ярлыки заданы в index.html (window.TC_CONV). Клики по телефону,
+   WhatsApp и почте ловим делегированием - переход не блокируем. */
+function conv(key){
+  var id = (window.TC_CONV || {})[key];
+  if (!id || typeof window.gtag !== "function") return;
+  window.gtag("event", "conversion", {send_to: id, value: 1.0, currency: "USD"});
+}
+document.addEventListener("click", function(e){
+  var a = e.target.closest ? e.target.closest("a[href]") : null;
+  if (!a) return;
+  var h = a.getAttribute("href") || "";
+  if (h.indexOf("tel:") === 0) conv("phone");
+  else if (h.indexOf("mailto:") === 0 || h.indexOf("wa.me") > -1) conv("contact");
+}, true);
+
+
 /* ---------------- КАЗАХСКИЙ СЛОВАРЬ ----------------
    Разметка русская. Ключа нет → строка остаётся русской. */
 var KZ = {
@@ -497,6 +514,7 @@ if (form) form.addEventListener("submit", function(e){
     ? "Сәлеметсіз бе! TradeChem сайтынан өтінім.\nАты: " + name + "\nТелефон: " + phone + (msg ? "\nНе керек: " + msg : "")
     : "Здравствуйте! Заявка с сайта TradeChem.\nИмя: " + name + "\nТелефон: " + phone + (msg ? "\nЧто нужно: " + msg : ""));
   ok.hidden = false;
+  conv("lead");
   window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(t), "_blank", "noopener");
 });
 
