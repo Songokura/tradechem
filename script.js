@@ -1,7 +1,7 @@
 /* ============================================================
    TRADECHEM - скрипт страницы.
    Плиты и фронт покрытия · перевод RU/KZ · меню · лента · каталог ·
-   форма в WhatsApp. Библиотек нет.
+   кнопки «Оставить заявку» → форма → WhatsApp. Библиотек нет.
    ============================================================ */
 (function(){
 "use strict";
@@ -10,123 +10,38 @@ var RED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 var HAS_IO = typeof IntersectionObserver === "function";
 var root = document.documentElement;
 
-/* ---------------- КОНВЕРСИИ GOOGLE ADS ----------------
-   Ярлыки заданы в index.html (window.TC_CONV). Клики по телефону,
-   WhatsApp и почте ловим делегированием - переход не блокируем. */
+/* ---------------- КОНВЕРСИЯ GOOGLE ADS ----------------
+   Ярлык задан в index.html (window.TC_CONV). Все обращения идут через форму,
+   конверсия одна - успешная отправка заявки. */
 function conv(key){
   var id = (window.TC_CONV || {})[key];
   if (!id || typeof window.gtag !== "function") return;
   window.gtag("event", "conversion", {send_to: id, value: 1.0, currency: "USD"});
 }
-document.addEventListener("click", function(e){
-  var a = e.target.closest ? e.target.closest("a[href]") : null;
-  if (!a) return;
-  var h = a.getAttribute("href") || "";
-  if (h.indexOf("tel:") === 0) conv("phone");
-  else if (h.indexOf("mailto:") === 0 || h.indexOf("wa.me") > -1) conv("contact");
-}, true);
-
 
 /* ---------------- КАЗАХСКИЙ СЛОВАРЬ ----------------
-   Разметка русская. Ключа нет → строка остаётся русской. */
-var KZ = {
-"m.title":"Астанадағы қорғаныш жабындар: өрттен қорғау, коррозиядан қорғау, гидрооқшаулау - TradeChem",
-"m.desc":"«Tradechem» ЖШС, Астана: қоймада қорғаныш жабындар. Protherma өрттен қорғау бояулары, ГОСТ бойынша коррозияға қарсы грунттар мен эмальдар, гидрооқшаулау, POLY TOP эпоксидті едендер, еріткіштер. Қазақстан мен Ресей зауыттарынан тікелей, бүкіл ел бойынша жеткізу.",
-"m.ogt":"Астанадағы қорғаныш жабындар - TradeChem",
-"m.ogd":"Қоймадағы қорғаныш жабындар: Protherma өрттен қорғау, ГОСТ бойынша коррозияға қарсы грунттар мен эмальдар, гидрооқшаулау, POLY TOP эпоксидті едендер, еріткіштер. Зауыттардан тікелей, Қазақстан бойынша жеткізу.",
-"a.home":"TradeChem, басты бетке","a.nav":"Сайт бөлімдері","a.lang":"Сайт тілі","a.call":"Қоңырау шалу","a.menu":"Мәзір",
-"nav.og":"Өрттен қорғау","nav.gi":"Гидрооқшаулау","nav.po":"Едендер","nav.po2":"Құйылмалы едендер","nav.ak":"Коррозиядан қорғау",
-"nav.ra":"Еріткіштер","nav.kat":"Каталог","nav.ds":"Жеткізу","nav.kt":"Байланыс",
-"b.wa":"WhatsApp арқылы бағасын білу","b.wa2":"WhatsApp-қа жазу","b.cat":"Каталог","b.price":"Бағасын білу",
-"b.ds":"Жеткізуді есептеу","b.call":"Қоңырау шалу","b.more":"Толық каталогты көрсету",
+   Лежит в assets/lang/kk.js и грузится только когда человек сам выбрал KZ
+   (или открыл ?lang=kk / выбрал раньше). В разметке и в этом файле казахского текста нет:
+   проверка Google Ads («Неподдерживаемый язык») видит только русский сайт.
+   Версия файла - из ?v= этого скрипта, бампается вместе с остальными ассетами.
+   Ключа нет → строка остаётся русской. */
+var ASSET_V = ((document.currentScript && document.currentScript.src.match(/[?&]v=([^&]+)/)) || [])[1] || "";
+var KK = null;   /* window.SITE_KK после загрузки */
+var KZ = {};
+function loadKK(done){
+  if (KK) return done();
+  var s = document.createElement("script");
+  s.src = "assets/lang/kk.js" + (ASSET_V ? "?v=" + ASSET_V : "");
+  s.onload = function(){ if (window.SITE_KK){ KK = window.SITE_KK; KZ = KK.dict || {}; } done(); };
+  s.onerror = function(){ done(); };
+  document.head.appendChild(s);
+}
 
-"h.kick":"Астана · дистрибьюция · 2023 жылдан","h.h1a":"Қорғаныш","h.h1b":"жабындар",
-"h.sub":"Өрттен қорғау · коррозиядан қорғау · гидрооқшаулау · құйылмалы едендер",
-"h.lead":"Ыдыстары 15-30 кг. ГОСТ және СТ-KZ, Қазақстан мен Ресей зауыттарынан тікелей жеткізілім, бүкіл Қазақстан бойынша жеткізу.",
-"h.a":"Боялған болат фермалар: қорғалған металл конструкциялар",
-
-"og.k":"Өрттен қорғау · 4 позиция","og.h":"Болат конструкциялар мен ағашты өрттен қорғау",
-"og.l":"Бағаналар, арқалықтар мен фермаларға арналған көпіршіктенетін Protherma бояулары, сыртқы жұмысқа атмосфераға төзімді нұсқасы, ағашқа арналған сіңдірме.",
-"og.a":"Болат бағана мен от фонындағы Protherma O өрттен қорғау бояуы",
-"gi.k":"Гидрооқшаулау · 2 позиция","gi.h":"Шатыр, іргетас және бассейндерді гидрооқшаулау",
-"gi.l":"Rubber Master резеңке бояуы және Aqua Fix-01 мастикасы: бетон, кірпіш және сылақ бетінде серпімді су өткізбейтін қабық.",
-"gi.a":"Rubber Master резеңке бояуы, 20 кг шелек",
-"po.k":"Эпоксидті жабындар · 6 позиция","po.h":"Бетон бойынша өнеркәсіптік едендер",
-"po.l":"POLY TOP жүйесі: сіңдірме, грунттар, құйылмалы компаунд, эпоксидті бояу және полиуретан эмалі. RAL бойынша түс, жіксіз, цех пен қоймаға.",
-"po.a":"Цехтың құйылмалы еденіндегі POLY TOP эпоксидті компаунды",
-"po.c1":"Грунт-сіңдірме","po.c2":"Мөлдір грунт","po.c4":"Компаунд","po.c5":"Эпоксидті бояу","po.c6":"ПУ-эмаль",
-"ak.k":"Коррозиядан қорғау · 11 позиция","ak.h":"Металға арналған коррозияға қарсы грунттар мен эмальдар",
-"ak.l":"Тот үстінен жағылатын 3-і 1-де грунт-эмальдан ГОСТ бойынша химияға төзімді ХВ және ХС-ке дейін. Ыдысы 18-30 кг, Астанадағы қоймадан.",
-"ak.a":"Бояу камерасында болат конструкцияны бояу","ak.c1":"3-і 1-де",
-"ra.k":"Кетіргіштер мен еріткіштер · 3 позиция","ra.h":"Еріткіштер және ескі бояу кетіргіші",
-"ra.l":"ГОСТ бойынша Р-4 және 646 көтерме 175 кг-нан, PR-10 қышқылды кетіргіші эпоксид, полиуретан және ұнтақ жабындарды 1-10 минутта алады.",
-"ra.a":"646 еріткішінің бөшкесі","ra.c1":"Р-4 еріткіші","ra.c2":"646 еріткіші","ra.c3":"PR-10 кетіргіші",
-
-"kat.k":"Каталог","kat.h":"Қоймадағы материалдар",
-"kat.l":"Бағаны көлем мен мекенжайға қарай есептейміз. «Бағасын білу» батырмасын басыңыз - позиция бойынша сұрақ бірден WhatsApp-қа кетеді.",
-"f.all":"Барлығы","g.og":"Өрттен қорғау","g.gi":"Гидрооқшаулау","g.po":"Эпоксидті едендер","g.ak":"Коррозиядан қорғау","g.ra":"Еріткіштер",
-"t.r4":"175 кг-нан","t.r646":"200 кг-нан",
-"c.protherma-o":"органикалық негіздегі өрттен қорғау бояуы","c.protherma-vd":"су-дисперсиялық өрттен қорғау бояуы",
-"c.protherma-oac":"атмосфераға төзімді өрттен қорғау бояуы","c.protherma-wood":"ағашқа арналған өртке қарсы сіңдірме",
-"c.rubber-master.g":"Резеңке бояу","c.rubber-master":"сумен сұйылтылатын, түс беруге болатын, жартылай күңгірт акрилат бояуы","c.aqua-fix":"гидрооқшаулағыш мастика",
-"c.pt-propitka":"бетонға арналған, екі компонентті","c.pt-prozr":"мөлдір, құйылмалы еден астына","c.pt-eko":"екі компонентті эпоксидті",
-"c.pt-pu-emal":"сумен сұйылтылатын, УК-ге төзімді","c.pt-kompaund":"құйылмалы, RAL бойынша түс","c.pt-kraska":"жұқа қабатты, RAL бойынша түс",
-"c.grunt-emal-3v1":"тот үстінен, тазалаусыз","c.pf115":"алкидті, ГОСТ 6465-76","c.gf021":"коррозияға қарсы, ГОСТ 25129-82",
-"c.hs010":"қызыл-қоңыр","c.hv062":"сұр","c.hs059":"қышқыл мен сілтіге төзімді","c.nc132":"нитроэмаль, ГОСТ 6631-74",
-"c.hv785":"химияға төзімді, ГОСТ 7313-75","c.hv161":"қасбеттік","c.surik":"ГОСТ 10503-71, қызыл-қоңыр","c.hv784":"химияға төзімді, ХВ-785-пен жүйеде",
-"c.pr10":"қышқылды, эпоксид пен ұнтақты алады","c.r4":"ГОСТ 7827-74","c.r646":"ГОСТ 18188-72",
-
-"tr.k":"Неге TradeChem","tr.h":"Қазақстан мен Ресей зауыттарынан тікелей жеткізілім",
-"tr.1":"ГОСТ және СТ-KZ","tr.1p":"Әр позицияға сертификат","tr.2":"Зауыт бағасы","tr.2p":"Делдалсыз, тікелей келісімшарт бойынша",
-"tr.3":"Міндетке сай таңдау","tr.3p":"Нысанның климаты мен жүктемесіне қарай материал","tr.4":"Нақты мерзім","tr.4p":"Келісілген күні тиеп жөнелту",
-"tr.a":"Лак-бояу материалдарының қоймасы","tr.cap":"Қойма · Астана",
-
-"ds.k":"Жеткізу","ds.h":"Бүкіл Қазақстан бойынша жеткізу",
-"ds.l":"Құны тапсырыс көлеміне байланысты. Астана бойынша тапсырыс кезінде нақтыланады.",
-"ds.a":"Тас жолдағы жүк көлігі: материалдарды Қазақстан бойынша жеткізу",
-
-"st.k":"Қалай жұмыс істейміз","st.h":"Өтінімнен нысанға дейін",
-"st.1":"Өтінім","st.1p":"WhatsApp-қа жазасыз немесе қоңырау шаласыз: қандай нысан, қандай материалдар.",
-"st.2":"Таңдау және есептеу","st.2p":"Материалды міндетке сай таңдаймыз, көлемі мен бағасын есептейміз.",
-"st.3":"Тиеп жөнелту","st.3p":"Тапсырысты Астанадағы қоймада жинаймыз, құжаттарын береміз.",
-"st.4":"Жеткізу","st.4p":"Қазақстанның кез келген қаласындағы нысанға жеткіземіз.",
-
-"kt.k":"Байланыс","kt.h":"Нысанға материал керек пе? Жазыңыз",
-"kt.l":"Жұмыс уақытында жауап береміз, тізіміңіз бойынша есеп - сол күні.",
-"kt.city":"Астана, Қазақстан","kt.geo":"Астанадағы қоймадан тиеп жөнелту, бүкіл Қазақстан бойынша жеткізу",
-"fm.name":"Атыңыз","fm.phone":"Телефон","fm.msg":"Не керек және қанша","fm.send":"WhatsApp-қа жіберу",
-"fm.ok":"Рақмет! WhatsApp ашылады, хабарлама дайын.","fm.err":"Атыңыз бен телефоныңызды көрсетіңіз.",
-"f.sub":"Қорғаныш жабындар · Астана · 2023 жылдан",
-"f.copy":"© 2026 «Tradechem» ЖШС. Өрттен қорғау, коррозиядан қорғау, гидрооқшаулау, құйылмалы едендер."
-};
-
-/* готовые тексты WhatsApp под каждый блок */
-var WA_TXT = {
-ru:{
-  hero:"Здравствуйте! Интересуют защитные покрытия. Подскажите цену и наличие: ",
-  og:"Здравствуйте! Интересует огнезащита Protherma. Объект и объём: ",
-  gi:"Здравствуйте! Интересует гидроизоляция (Rubber Master / Aqua Fix-01). Объект и объём: ",
-  po:"Здравствуйте! Интересуют эпоксидные покрытия POLY TOP для бетонного пола. Площадь и объект: ",
-  ak:"Здравствуйте! Интересуют антикоррозионные грунты и эмали. Позиции и объём: ",
-  ra:"Здравствуйте! Интересуют растворители / смывка. Позиции и объём: ",
-  ds:"Здравствуйте! Нужна доставка материалов. Город, адрес объекта и объём заказа: ",
-  kontakty:"Здравствуйте! Пишу с сайта TradeChem. Нужен расчёт по материалам: ",
-  item:"Здравствуйте! Интересует {n} ({t}). Подскажите цену и наличие. Объём: "
-},
-kk:{
-  hero:"Сәлеметсіз бе! Қорғаныш жабындар қызықтырады. Бағасы мен қоймадағы бар-жоғын айтыңызшы: ",
-  og:"Сәлеметсіз бе! Protherma өрттен қорғау бояуы қызықтырады. Нысан мен көлемі: ",
-  gi:"Сәлеметсіз бе! Гидрооқшаулау (Rubber Master / Aqua Fix-01) қызықтырады. Нысан мен көлемі: ",
-  po:"Сәлеметсіз бе! Бетон еденге арналған POLY TOP эпоксидті жабындары қызықтырады. Ауданы мен нысан: ",
-  ak:"Сәлеметсіз бе! Коррозияға қарсы грунттар мен эмальдар қызықтырады. Позициялар мен көлемі: ",
-  ra:"Сәлеметсіз бе! Еріткіштер / кетіргіш қызықтырады. Позициялар мен көлемі: ",
-  ds:"Сәлеметсіз бе! Материалдарды жеткізу керек. Қала, нысанның мекенжайы және тапсырыс көлемі: ",
-  kontakty:"Сәлеметсіз бе! TradeChem сайтынан жазып отырмын. Материалдар бойынша есеп керек: ",
-  item:"Сәлеметсіз бе! {n} ({t}) қызықтырады. Бағасы мен бар-жоғын айтыңызшы. Көлемі: "
-}};
+/* тексты заявки, которая уходит в WhatsApp после отправки формы */
+var MSG_RU = {hello:"Здравствуйте! Заявка с сайта TradeChem.", reason:"Причина", name:"Имя", phone:"Телефон", note:"Комментарий", item:"Позиция: {n} ({t})"};
+function MSG(){ return (curLang() === "kk" && KK && KK.msg) ? KK.msg : MSG_RU; }
 
 var TICK = ["Protherma O","Protherma ВД","Protherma O-AC","Грунт-эмаль 3 в 1","ПФ-115","ГФ-021","POLY TOP","Rubber Master","Aqua Fix-01","ХВ-785","ХС-010","Растворитель 646","Р-4","Смывка PR-10"];
-var TICK_KZ = ["Protherma O","Protherma ВД","Protherma O-AC","Грунт-эмаль 3-і 1-де","ПФ-115","ГФ-021","POLY TOP","Rubber Master","Aqua Fix-01","ХВ-785","ХС-010","646 еріткіші","Р-4","PR-10 кетіргіші"];
 
 /* ---------------- ПЕРЕВОД ---------------- */
 var RU = {};
@@ -139,25 +54,8 @@ function snapshot(){
 function pick(k, kk){ return (kk && KZ[k] !== undefined) ? KZ[k] : RU[k]; }
 function curLang(){ return root.lang === "kk" ? "kk" : "ru"; }
 
-function setWaLinks(){
-  var L = curLang();
-  document.querySelectorAll("[data-wa]").forEach(function(a){
-    var t = WA_TXT[L][a.dataset.wa] || WA_TXT[L].hero;
-    a.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(t);
-    a.target = "_blank"; a.rel = "noopener";
-  });
-  document.querySelectorAll("[data-wa-item]").forEach(function(a){
-    var c = a.closest(".card"); if (!c) return;
-    var tara = c.dataset.tara;
-    if (L === "kk" && /^от /.test(tara)) tara = tara.replace(/^от /, "") + "-нан";
-    var t = WA_TXT[L].item.replace("{n}", c.dataset.name).replace("{t}", tara);
-    a.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(t);
-    a.target = "_blank"; a.rel = "noopener";
-  });
-}
-
 function applyLang(lang){
-  var kk = lang === "kk";
+  var kk = lang === "kk" && !!KK;       /* словарь не загрузился - остаёмся на русском */
   root.setAttribute("lang", kk ? "kk" : "ru");
   document.querySelectorAll("[data-i]").forEach(function(el){
     var v = pick(el.dataset.i, kk); if (v !== undefined) el.innerHTML = v;
@@ -179,7 +77,6 @@ function applyLang(lang){
     b.setAttribute("aria-pressed", on ? "true" : "false");
   });
   try { localStorage.setItem("tc-lang", kk ? "kk" : "ru"); } catch(e){}
-  setWaLinks();
   fillTicker();
   renderPrices();
   requestAnimationFrame(fitText);
@@ -188,11 +85,17 @@ function initLang(){
   var url = new URLSearchParams(location.search).get("lang");
   var saved = null;
   try { saved = localStorage.getItem("tc-lang"); } catch(e){}
+  /* ?lang= в адресе главнее сохранённого выбора: русское объявление всегда открывает русский сайт.
+     Язык по navigator.language не угадываем - казахский только явным выбором человека. */
   var lang = (url === "kk" || url === "ru") ? url : (saved === "kk" ? "kk" : "ru");
-  applyLang(lang);
+  setLang(lang);
+}
+function setLang(lang){
+  if (lang === "kk") loadKK(function(){ applyLang("kk"); });
+  else applyLang("ru");
 }
 document.querySelectorAll(".lang button").forEach(function(b){
-  b.addEventListener("click", function(){ applyLang(b.getAttribute("data-lang")); });
+  b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); });
 });
 
 /* дисплейные строки: казахский длиннее - ужимаем, пока не влезет */
@@ -213,7 +116,7 @@ function fitText(){
    Копий столько, чтобы дорожка была шире двух экранов; шаг цикла - одна копия. */
 function fillTicker(){
   var el = document.getElementById("ticker"); if (!el) return;
-  var list = curLang() === "kk" ? TICK_KZ : TICK;
+  var list = (curLang() === "kk" && KK && KK.tick) ? KK.tick : TICK;
   var one = list.map(function(t){ return "<b>" + t + "</b>"; }).join("");
   el.innerHTML = one;
   var w = el.scrollWidth || 1000;
@@ -249,7 +152,7 @@ document.addEventListener("click", function(e){
   var t = document.getElementById(id); if (!t) return;
   e.preventDefault();
   closeMenu();
-  var top = t.getBoundingClientRect().top + scrollY - (t.classList.contains("pw") ? 0 : HH());
+  var top = t.getBoundingClientRect().top + scrollY - (t.classList.contains("pw") ? 0 : HH() + 12);
   scrollTo({ top: Math.max(0, top), behavior: RED ? "auto" : "smooth" });
   try { history.pushState(null, "", "#" + id); } catch(err){}
 });
@@ -381,11 +284,7 @@ if (HAS_IO) {
 var SHEET_ID = "1oupf07NhRrjUnryWf8kb-EU1hyplGj21EeHxFilfAPg";
 var SHEET_CSV = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&gid=0";
 var PRICES = null;   /* артикул → {n: товар, t: тара, v: цена, u: единица, ot: цена «от»} */
-var UNIT = {
-  ru: {"за кг":"₸/кг", "за тару":"₸ за тару", "за шт":"₸/шт", "за литр":"₸/л"},
-  kk: {"за кг":"₸/кг", "за тару":"₸ ыдыс үшін", "за шт":"₸/дана", "за литр":"₸/л"}
-};
-var ORDER_TXT = {ru:"Заказать", kk:"Тапсырыс беру"};
+var UNIT_RU = {"за кг":"₸/кг", "за тару":"₸ за тару", "за шт":"₸/шт", "за литр":"₸/л"};
 
 /* CSV с кавычками и переводами строк внутри ячеек */
 function csvRows(t){
@@ -426,7 +325,7 @@ function parsePrices(rows){
       v: 0, ot: false
     };
     var v = num(r[3]), vo = num(r[5]);
-    var flag = /^(да|иә|ия|от|yes|true)$/i.test((r[5] || "").trim());   /* старый формат колонки F */
+    var flag = /^(да|и\u04d9|ия|от|yes|true)$/i.test((r[5] || "").trim());   /* старый формат колонки F */
     if (v > 0){ rec.v = v; rec.ot = flag; }
     else if (vo > 0){ rec.v = vo; rec.ot = true; }
     map[sku] = rec;
@@ -438,15 +337,15 @@ function money(n){
   var s = (r % 1 ? r.toFixed(2) : r.toFixed(0)).split("."), int = s[0];
   return int.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + (s[1] ? "," + s[1] : "");
 }
-/* Тара в казахской версии: «от 175 кг» → «175 кг-нан». */
+/* Тара в казахской версии: «от 175 кг» → «175 кг-нан» (суффикс из kk.js). */
 function taraTxt(t, kk){
-  return (kk && /^от\s/i.test(t)) ? t.replace(/^от\s*/i, "") + "-нан" : t;
+  return (kk && KK && /^от\s/i.test(t)) ? t.replace(/^от\s*/i, "") + KK.tara : t;
 }
 function renderPrices(){
   if (!PRICES) return;
-  var kk = curLang() === "kk", L = kk ? "kk" : "ru", touched = false;
+  var kk = curLang() === "kk" && !!KK, unit = kk ? KK.unit : UNIT_RU;
   document.querySelectorAll(".card[data-sku]").forEach(function(c){
-    var box = c.querySelector(".pr"), btn = c.querySelector("[data-wa-item]");
+    var box = c.querySelector(".pr"), btn = c.querySelector("[data-lead=item]");
     var p = PRICES[c.dataset.sku];
     if (!p){
       if (box) box.hidden = true;
@@ -457,13 +356,13 @@ function renderPrices(){
     var h3 = c.querySelector("h3");
     if (p.n){
       if (h3 && h3.textContent !== p.n) h3.textContent = p.n;
-      if (c.dataset.name !== p.n){ c.dataset.name = p.n; touched = true; }
+      if (c.dataset.name !== p.n) c.dataset.name = p.n;
     }
     /* C - тара */
     if (p.t){
       var tEl = c.querySelector(".tara"), tv = taraTxt(p.t, kk);
       if (tEl && tEl.textContent !== tv) tEl.textContent = tv;
-      if (c.dataset.tara !== p.t){ c.dataset.tara = p.t; touched = true; }
+      if (c.dataset.tara !== p.t) c.dataset.tara = p.t;
     }
     /* D + E + F - цена */
     if (!box) return;
@@ -472,12 +371,11 @@ function renderPrices(){
       if (btn) btn.innerHTML = pick("b.price", kk);
       return;
     }
-    var s = money(p.v) + " " + (UNIT[L][p.u] || UNIT[L]["за кг"]);
-    box.textContent = p.ot ? (kk ? s + " бастап" : "от " + s) : s;
+    var s = money(p.v) + " " + (unit[p.u] || unit["за кг"]);
+    box.textContent = p.ot ? (kk ? s + KK.from : "от " + s) : s;
     box.hidden = false;
-    if (btn) btn.textContent = ORDER_TXT[L];
+    if (btn) btn.textContent = kk ? KK.order : "Заказать";
   });
-  if (touched) setWaLinks();          /* имя и тара уехали в текст ссылки WhatsApp */
 }
 function setPrices(map, save){
   PRICES = map || {};
@@ -500,23 +398,85 @@ function loadPrices(){
     });
 }
 
-/* ---------------- ФОРМА → WhatsApp ---------------- */
-var form = document.getElementById("form");
-if (form) form.addEventListener("submit", function(e){
-  e.preventDefault();
-  var ok = document.getElementById("fmok"), err = document.getElementById("fmerr");
-  if (form.company && form.company.value) return;          /* honeypot */
-  var name = form.name.value.trim(), phone = form.phone.value.trim(), msg = form.msg.value.trim();
-  if (!name || phone.replace(/\D/g, "").length < 10) { err.hidden = false; ok.hidden = true; return; }
-  err.hidden = true;
-  var L = curLang();
-  var t = (L === "kk"
-    ? "Сәлеметсіз бе! TradeChem сайтынан өтінім.\nАты: " + name + "\nТелефон: " + phone + (msg ? "\nНе керек: " + msg : "")
-    : "Здравствуйте! Заявка с сайта TradeChem.\nИмя: " + name + "\nТелефон: " + phone + (msg ? "\nЧто нужно: " + msg : ""));
-  ok.hidden = false;
-  conv("lead");
-  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(t), "_blank", "noopener");
+/* ---------------- КНОПКИ «ОСТАВИТЬ ЗАЯВКУ» → ФОРМА ----------------
+   Все обращения идут через форму: кнопки ведут на #zayavka и подставляют
+   причину обращения (блок) и позицию (карточка каталога). Прокрутку делает обработчик якорей. */
+var form = document.getElementById("zayavka");
+var lastAuto = "";   /* текст, который подставили сами: чужой ввод не затираем */
+document.addEventListener("click", function(e){
+  var a = e.target.closest ? e.target.closest("a[data-lead]") : null;
+  if (!a || !form) return;
+  var kind = a.getAttribute("data-lead"), card = null;
+  if (kind === "item") { card = a.closest(".card"); kind = card ? card.dataset.g : ""; }
+  var opt = kind && form.reason.querySelector('option[data-k="' + kind + '"]');
+  if (opt) { form.reason.value = opt.value; form.reason.classList.remove("is-bad"); }
+  if (card) {
+    var tara = taraTxt(card.dataset.tara || "", curLang() === "kk");
+    var pre = MSG().item.replace("{n}", card.dataset.name).replace("{t}", tara);
+    if (!form.msg.value.trim() || form.msg.value === lastAuto) { form.msg.value = pre; lastAuto = pre; }
+  }
+  /* на десктопе курсор в первое пустое поле, когда прокрутка доедет */
+  if (matchMedia("(hover:hover)").matches) setTimeout(function(){
+    var f = !form.name.value.trim() ? form.name : (!normPhone(form.phone.value) ? form.phone : null);
+    if (f) try { f.focus({preventScroll: true}); } catch(x){}
+  }, 800);
 });
+
+/* ---------------- ФОРМА: имя, телефон и причина обязательны ---------------- */
+function normPhone(v){
+  var d = String(v || "").replace(/\D/g, "");
+  if (d.length === 11 && d.charAt(0) === "8") d = "7" + d.slice(1);
+  if (d.length === 10) d = "7" + d;
+  if (d.length !== 11 || d.charAt(0) !== "7") return "";
+  return "+7 " + d.slice(1, 4) + " " + d.slice(4, 7) + " " + d.slice(7, 9) + " " + d.slice(9, 11);
+}
+if (form) {
+  var fmOk = document.getElementById("fmok"), fmErr = document.getElementById("fmerr");
+  var checks = [
+    [form.name,   function(){ return form.name.value.trim().length >= 2; }],
+    [form.phone,  function(){ return !!normPhone(form.phone.value); }],
+    [form.reason, function(){ return !!form.reason.value; }]
+  ];
+  checks.forEach(function(c){
+    var ev = c[0].tagName === "SELECT" ? "change" : "input";
+    c[0].addEventListener(ev, function(){
+      if (c[1]()) c[0].classList.remove("is-bad");
+      if (!fmErr.hidden && checks.every(function(x){ return x[1](); })) fmErr.hidden = true;
+    });
+  });
+  form.phone.addEventListener("input", function(){
+    var v = form.phone.value.replace(/[^\d+()\-\s]/g, "");
+    if (v !== form.phone.value) form.phone.value = v;
+  });
+  /* Проверка на window в фазе захвата - раньше трекера LeadBot (он слушает submit на document).
+     Незаполненная заявка и бот-ловушка не доходят ни до бота, ни до Google Ads. */
+  window.addEventListener("submit", function(e){
+    if (e.target !== form) return;
+    if (form.hp_extra && form.hp_extra.value) { e.preventDefault(); e.stopPropagation(); return; }
+    var bad = checks.filter(function(c){ var ok = c[1](); c[0].classList.toggle("is-bad", !ok); return !ok; });
+    if (bad.length) {
+      e.preventDefault(); e.stopPropagation();
+      fmErr.hidden = false; fmOk.hidden = true;
+      bad[0][0].focus();
+      return;
+    }
+    form.name.value = form.name.value.trim();
+    form.phone.value = normPhone(form.phone.value);   /* в бот уходит номер в едином виде */
+  }, true);
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var M = MSG(), opt = form.reason.options[form.reason.selectedIndex];
+    var parts = [M.hello, M.reason + ": " + opt.textContent.trim()];
+    if (form.msg.value.trim()) parts.push(M.note + ": " + form.msg.value.trim());
+    parts.push(M.name + ": " + form.name.value, M.phone + ": " + form.phone.value);
+    fmErr.hidden = true; fmOk.hidden = false;
+    /* Google Ads: конверсия «Отправка формы для потенциальных клиентов» */
+    conv("lead");
+    /* WhatsApp сразу после отправки - LeadBot склеивает форму и WhatsApp в одно обращение */
+    window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(parts.join("\n")), "_blank", "noopener");
+  });
+}
 
 /* ---------------- СТАРТ ---------------- */
 snapshot();

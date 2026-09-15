@@ -14,31 +14,16 @@
   gtag('js', new Date());
   gtag('config', 'AW-18437463192');
 
-  /* Ярлыки конверсий Google Ads - используются в script.js */
+  /* Ярлык конверсии Google Ads - используется в script.js. Все обращения идут через форму,
+     поэтому считается только отправка заявки. */
   window.TC_CONV = {
-    phone: 'AW-18437463192/fXuTCPH0kfEcEJi51ddE',  /* Интерактивные номера телефонов */
-    lead:  'AW-18437463192/n4ceCMOLkvEcEJi51ddE',  /* Отправка формы для потенциальных клиентов */
-    contact: 'AW-18437463192/fPLBCI7Hk_EcEJi51ddE' /* Контакт: WhatsApp, e-mail */
+    lead: 'AW-18437463192/n4ceCMOLkvEcEJi51ddE'  /* Отправка формы для потенциальных клиентов */
   };
-
-  /* Штатный сниппет Google для кликов по ссылке. Без url переход выполняет сам браузер. */
-  function gtag_report_conversion(url) {
-    var callback = function () {
-      if (typeof(url) != 'undefined') { window.location = url; }
-    };
-    gtag('event', 'conversion', {
-      'send_to': window.TC_CONV.phone,
-      'value': 1.0,
-      'currency': 'USD',
-      'event_callback': callback
-    });
-    return false;
-  }
 </script>
+<script src="https://lead-bot.sultan-askarov-kz.workers.dev/t.js" data-site="tradechem" defer></script>
 
 <link rel="canonical" href="https://trade-chem.kz/">
 <link rel="alternate" hreflang="ru" href="https://trade-chem.kz/?lang=ru">
-<link rel="alternate" hreflang="kk" href="https://trade-chem.kz/?lang=kk">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:site_name" content="TradeChem">
@@ -57,7 +42,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tektur:wght@600;800&family=Golos+Text:wght@400;600&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/photo/hero.webp" fetchpriority="high">
-<link rel="stylesheet" href="styles.css?v=20260908-1">
+<link rel="stylesheet" href="styles.css?v=20260915-1">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -67,7 +52,6 @@
   "url": "https://trade-chem.kz/",
   "logo": "https://trade-chem.kz/assets/icon-512.png",
   "image": "https://trade-chem.kz/assets/og-image.jpg",
-  "telephone": "+77015230974",
   "email": "too.tradechem@gmail.com",
   "foundingDate": "2023",
   "address": {"@type": "PostalAddress", "addressLocality": "Астана", "addressCountry": "KZ"},
@@ -103,12 +87,10 @@
     </nav>
     <div class="hdr-right">
       <div class="lang" role="group" aria-label="Язык сайта" data-i-aria="a.lang">
-        <button type="button" data-lang="ru" class="is-active" aria-pressed="true" lang="ru">RU</button>
-        <button type="button" data-lang="kk" aria-pressed="false" lang="kk">KZ</button>
+        <button type="button" data-lang="ru" class="is-active" aria-pressed="true">RU</button>
+        <button type="button" data-lang="kk" aria-pressed="false">KZ</button>
       </div>
-      <a class="call" href="tel:+77015230974" aria-label="Позвонить" data-i-aria="a.call">
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
-      </a>
+      <a class="btn btn-solid hdr-cta" href="#zayavka" data-lead="hdr" data-i="b.lead">Оставить заявку</a>
       <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Меню" data-i-aria="a.menu"><span></span></button>
     </div>
   </div>
@@ -126,8 +108,7 @@
     <a href="#kontakty" data-i="nav.kt">Контакты</a>
   </nav>
   <div class="mnav-c">
-    <a href="tel:+77015230974">+7 (701) 523-09-74</a>
-    <a href="#" data-wa="hero" class="btn btn-solid" data-i="b.wa2">Написать в WhatsApp</a>
+    <a href="#zayavka" data-lead="menu" class="btn btn-solid" data-i="b.lead">Оставить заявку</a>
   </div>
 </div>
 
@@ -145,7 +126,7 @@
       <p class="h-sub" data-i="h.sub">Огнезащита · антикоррозия · гидроизоляция · наливные полы</p>
       <p class="lead lead-w" data-i="h.lead">Тары от 15-30 кг. ГОСТ и СТ-KZ, прямые поставки с заводов Казахстана и России, доставка по всему Казахстану.</p>
       <div class="btns">
-        <a class="btn btn-solid" href="#" data-wa="hero" data-i="b.wa">Узнать цену в WhatsApp</a>
+        <a class="btn btn-solid" href="#zayavka" data-lead="hero" data-i="b.lead">Оставить заявку</a>
         <a class="btn btn-ghost btn-ghost-w" href="#katalog" data-i="b.cat">Каталог</a>
       </div>
     </div>
@@ -170,7 +151,7 @@
       <div class="txt">
         <p class="lead" data-i="og.l">Вспучивающиеся краски Protherma для колонн, балок и ферм, атмосферостойкая версия для улицы, пропитка для древесины.</p>
         <ul class="chips"><li>Protherma O</li><li>Protherma ВД</li><li>Protherma O-AC</li><li>Protherma Wood</li></ul>
-        <a class="btn btn-solid" href="#" data-wa="og" data-i="b.price">Узнать цену</a>
+        <a class="btn btn-solid" href="#zayavka" data-lead="og" data-i="b.price">Узнать цену</a>
       </div>
     </div>
   </section>
@@ -193,7 +174,7 @@
       <div class="txt">
         <p class="lead" data-i="gi.l">Резиновая краска Rubber Master и мастика Aqua Fix-01: эластичная водонепроницаемая плёнка по бетону, кирпичу и штукатурке.</p>
         <ul class="chips"><li>Rubber Master · 20 кг</li><li>Aqua Fix-01 · 20 кг</li></ul>
-        <a class="btn btn-solid" href="#" data-wa="gi" data-i="b.price">Узнать цену</a>
+        <a class="btn btn-solid" href="#zayavka" data-lead="gi" data-i="b.price">Узнать цену</a>
       </div>
     </div>
   </section>
@@ -216,7 +197,7 @@
       <div class="txt">
         <p class="lead" data-i="po.l">Система POLY TOP: пропитка, грунты, наливной компаунд, эпоксидная краска и полиуретановая эмаль. Цвет по RAL, бесшовно, под цех и склад.</p>
         <ul class="chips"><li data-i="po.c1">Грунт-пропитка</li><li data-i="po.c2">Грунт прозрачный</li><li>PolyTop Эко</li><li data-i="po.c4">Компаунд</li><li data-i="po.c5">Эпоксидная краска</li><li data-i="po.c6">ПУ-эмаль</li></ul>
-        <a class="btn btn-solid" href="#" data-wa="po" data-i="b.price">Узнать цену</a>
+        <a class="btn btn-solid" href="#zayavka" data-lead="po" data-i="b.price">Узнать цену</a>
       </div>
     </div>
   </section>
@@ -233,7 +214,7 @@
       <h2 class="h2" data-i="ak.h">Антикоррозионные грунты и эмали по металлу</h2>
       <p class="lead lead-w" data-i="ak.l">От грунт-эмали 3 в 1 по ржавчине до химстойких ХВ и ХС по ГОСТ. Тара 18-30 кг, со склада в Астане.</p>
       <ul class="chips chips-w"><li data-i="ak.c1">3 в 1</li><li>ПФ-115</li><li>ГФ-021</li><li>ХС-010</li><li>ХВ-062</li><li>ХС-059</li><li>НЦ-132</li><li>ХВ-785</li><li>ХВ-161</li><li>МА-15</li><li>ХВ-784</li></ul>
-      <a class="btn btn-solid" href="#" data-wa="ak" data-i="b.price">Узнать цену</a>
+      <a class="btn btn-solid" href="#zayavka" data-lead="ak" data-i="b.price">Узнать цену</a>
     </div>
   </section>
 </div>
@@ -255,7 +236,7 @@
       <div class="txt">
         <p class="lead" data-i="ra.l">Р-4 и 646 по ГОСТ оптом от 175 кг, кислотная смывка PR-10 снимает эпоксид, полиуретан и порошковые покрытия за 1-10 минут.</p>
         <ul class="chips"><li data-i="ra.c1">Растворитель Р-4</li><li data-i="ra.c2">Растворитель 646</li><li data-i="ra.c3">Смывка PR-10</li></ul>
-        <a class="btn btn-solid" href="#" data-wa="ra" data-i="b.price">Узнать цену</a>
+        <a class="btn btn-solid" href="#zayavka" data-lead="ra" data-i="b.price">Узнать цену</a>
       </div>
     </div>
   </section>
@@ -267,7 +248,7 @@
     <div class="shead rv">
       <p class="kick" data-i="kat.k">Каталог</p>
       <h2 class="h2" data-i="kat.h">Материалы на складе</h2>
-      <p class="lead" data-i="kat.l">Цену считаем под объём и адрес. Нажмите «Узнать цену» - вопрос по позиции сразу уйдёт в WhatsApp.</p>
+      <p class="lead" data-i="kat.l">Цену считаем под объём и адрес. Нажмите «Узнать цену» - позиция сама подставится в заявку.</p>
     </div>
     <div class="filters rv" id="filters">
       <button type="button" class="is-on" data-g="all" data-i="f.all">Все</button>
@@ -285,7 +266,7 @@
     <h3>Protherma O</h3>
     <p data-i="c.protherma-o">огнезащита на органической основе</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="protherma-vd" class="card rv scene" data-g="og" data-name="Protherma ВД" data-tara="20 кг">
@@ -295,7 +276,7 @@
     <h3>Protherma ВД</h3>
     <p data-i="c.protherma-vd">огнезащита водно-дисперсионная</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="protherma-oac" class="card rv" data-g="og" data-name="Protherma O-AC" data-tara="25 кг">
@@ -305,7 +286,7 @@
     <h3>Protherma O-AC</h3>
     <p data-i="c.protherma-oac">огнезащита атмосферостойкая</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="protherma-wood" class="card rv" data-g="og" data-name="Protherma Wood" data-tara="10 кг">
@@ -315,7 +296,7 @@
     <h3>Protherma Wood</h3>
     <p data-i="c.protherma-wood">противопожарная пропитка древесины</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">10 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">10 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="rubber-master" class="card rv" data-g="gi" data-name="Rubber Master" data-tara="20 кг">
@@ -325,7 +306,7 @@
     <h3>Rubber Master</h3>
     <p data-i="c.rubber-master">водоразбавляемая, колеруемая, полуматовая краска на акрилатной дисперсии</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="aqua-fix" class="card rv" data-g="gi" data-name="Aqua Fix-01" data-tara="20 кг">
@@ -335,7 +316,7 @@
     <h3>Aqua Fix-01</h3>
     <p data-i="c.aqua-fix">мастика гидроизоляционная</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="pt-propitka" class="card rv" data-g="po" data-name="Грунт-пропитка POLY TOP" data-tara="20 кг">
@@ -345,7 +326,7 @@
     <h3>Грунт-пропитка POLY TOP</h3>
     <p data-i="c.pt-propitka">для бетона, двухкомпонентная</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="pt-prozr" class="card rv" data-g="po" data-name="Грунт эпоксидный POLY TOP" data-tara="20 кг">
@@ -355,7 +336,7 @@
     <h3>Грунт эпоксидный POLY TOP</h3>
     <p data-i="c.pt-prozr">прозрачный, под наливные полы</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="pt-eko" class="card rv" data-g="po" data-name="Грунт PolyTop Эко" data-tara="25 кг">
@@ -365,7 +346,7 @@
     <h3>Грунт PolyTop Эко</h3>
     <p data-i="c.pt-eko">двухкомпонентный эпоксидный</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="pt-pu-emal" class="card rv" data-g="po" data-name="Полиуретановая эмаль Poly Top" data-tara="15 кг">
@@ -375,7 +356,7 @@
     <h3>Полиуретановая эмаль Poly Top</h3>
     <p data-i="c.pt-pu-emal">водоразбавляемая, стойкая к УФ</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">15 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">15 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="pt-kompaund" class="card rv scene" data-g="po" data-name="Эпоксидный компаунд POLY TOP" data-tara="25 кг">
@@ -385,7 +366,7 @@
     <h3>Эпоксидный компаунд POLY TOP</h3>
     <p data-i="c.pt-kompaund">наливной, цвет по RAL</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="pt-kraska" class="card rv" data-g="po" data-name="Эпоксидная краска POLY TOP" data-tara="15 кг">
@@ -395,7 +376,7 @@
     <h3>Эпоксидная краска POLY TOP</h3>
     <p data-i="c.pt-kraska">тонкослойная, цвет по RAL</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">15 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">15 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="grunt-emal-3v1" class="card rv scene" data-g="ak" data-name="Грунт-эмаль 3 в 1" data-tara="20 кг">
@@ -405,7 +386,7 @@
     <h3>Грунт-эмаль 3 в 1</h3>
     <p data-i="c.grunt-emal-3v1">по ржавчине, без зачистки</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">20 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="pf115" class="card rv" data-g="ak" data-name="Эмаль ПФ-115" data-tara="30 кг">
@@ -415,7 +396,7 @@
     <h3>Эмаль ПФ-115</h3>
     <p data-i="c.pf115">алкидная, ГОСТ 6465-76</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">30 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">30 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="gf021" class="card rv" data-g="ak" data-name="Грунтовка ГФ-021" data-tara="30 кг">
@@ -425,7 +406,7 @@
     <h3>Грунтовка ГФ-021</h3>
     <p data-i="c.gf021">антикоррозионная, ГОСТ 25129-82</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">30 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">30 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="hs010" class="card rv" data-g="ak" data-name="Грунтовка ХС-010" data-tara="25 кг">
@@ -435,7 +416,7 @@
     <h3>Грунтовка ХС-010</h3>
     <p data-i="c.hs010">красно-коричневая</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="hv062" class="card rv" data-g="ak" data-name="Грунтовка ХВ-062" data-tara="25 кг">
@@ -445,7 +426,7 @@
     <h3>Грунтовка ХВ-062</h3>
     <p data-i="c.hv062">серая</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="hs059" class="card rv" data-g="ak" data-name="Грунтовка ХС-059" data-tara="25 кг">
@@ -455,7 +436,7 @@
     <h3>Грунтовка ХС-059</h3>
     <p data-i="c.hs059">стойкая к кислотам и щелочам</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="nc132" class="card rv" data-g="ak" data-name="Эмаль НЦ-132" data-tara="25 кг">
@@ -465,7 +446,7 @@
     <h3>Эмаль НЦ-132</h3>
     <p data-i="c.nc132">нитроэмаль, ГОСТ 6631-74</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="hv785" class="card rv" data-g="ak" data-name="Эмаль ХВ-785" data-tara="25 кг">
@@ -475,7 +456,7 @@
     <h3>Эмаль ХВ-785</h3>
     <p data-i="c.hv785">химстойкая, ГОСТ 7313-75</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="hv161" class="card rv" data-g="ak" data-name="Эмаль ХВ-161" data-tara="25 кг">
@@ -485,7 +466,7 @@
     <h3>Эмаль ХВ-161</h3>
     <p data-i="c.hv161">фасадная</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">25 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="surik" class="card rv" data-g="ak" data-name="Сурик железный МА-15" data-tara="30 кг">
@@ -495,7 +476,7 @@
     <h3>Сурик железный МА-15</h3>
     <p data-i="c.surik">ГОСТ 10503-71, красно-коричневый</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">30 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">30 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="hv784" class="card rv" data-g="ak" data-name="Лак ХВ-784" data-tara="18 кг">
@@ -505,7 +486,7 @@
     <h3>Лак ХВ-784</h3>
     <p data-i="c.hv784">химстойкий, в системе с ХВ-785</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">18 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">18 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="pr10" class="card rv" data-g="ra" data-name="Смывка Paint Remover PR-10" data-tara="1 кг">
@@ -515,7 +496,7 @@
     <h3>Смывка Paint Remover PR-10</h3>
     <p data-i="c.pr10">кислотная, снимает эпоксид и порошок</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara">1 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara">1 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="r4" class="card rv" data-g="ra" data-name="Растворитель Р-4" data-tara="от 175 кг">
@@ -525,7 +506,7 @@
     <h3>Растворитель Р-4</h3>
     <p data-i="c.r4">ГОСТ 7827-74</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara" data-i="t.r4">от 175 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara" data-i="t.r4">от 175 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
 <article data-sku="r646" class="card rv" data-g="ra" data-name="Растворитель 646" data-tara="от 200 кг">
@@ -535,7 +516,7 @@
     <h3>Растворитель 646</h3>
     <p data-i="c.r646">ГОСТ 18188-72</p>
     <div class="pr" hidden></div>
-    <div class="cf"><span class="tara" data-i="t.r646">от 200 кг</span><a class="cbtn" href="#" data-wa-item data-i="b.price">Узнать цену</a></div>
+    <div class="cf"><span class="tara" data-i="t.r646">от 200 кг</span><a class="cbtn" href="#zayavka" data-lead="item" data-i="b.price">Узнать цену</a></div>
   </div>
 </article>
     </div>
@@ -575,7 +556,7 @@
       <p class="kick kick-w" data-i="ds.k">Доставка</p>
       <h2 class="h2" data-i="ds.h">Доставка по всему Казахстану</h2>
       <p class="lead lead-w" data-i="ds.l">Стоимость зависит от объёма заказа. По Астане уточняется при заказе.</p>
-      <a class="btn btn-solid" href="#" data-wa="ds" data-i="b.ds">Рассчитать доставку</a>
+      <a class="btn btn-solid" href="#zayavka" data-lead="ds" data-i="b.ds">Рассчитать доставку</a>
     </div>
   </section>
 </div>
@@ -588,7 +569,7 @@
       <h2 class="h2" data-i="st.h">От заявки до объекта</h2>
     </div>
     <ol class="sgrid">
-      <li class="step rv"><span class="num">01</span><div><h3 data-i="st.1">Заявка</h3><p data-i="st.1p">Пишете в WhatsApp или звоните: что за объект и какие материалы.</p></div></li>
+      <li class="step rv"><span class="num">01</span><div><h3 data-i="st.1">Заявка</h3><p data-i="st.1p">Оставляете заявку на сайте: что за объект и какие материалы.</p></div></li>
       <li class="step rv"><span class="num">02</span><div><h3 data-i="st.2">Подбор и расчёт</h3><p data-i="st.2p">Подбираем материал под задачу, считаем объём и цену.</p></div></li>
       <li class="step rv"><span class="num">03</span><div><h3 data-i="st.3">Отгрузка</h3><p data-i="st.3p">Собираем заказ на складе в Астане, выдаём документы.</p></div></li>
       <li class="step rv"><span class="num">04</span><div><h3 data-i="st.4">Доставка</h3><p data-i="st.4p">Везём на объект в любой город Казахстана.</p></div></li>
@@ -601,28 +582,36 @@
   <div class="wrap">
     <div class="shead rv">
       <p class="kick" data-i="kt.k">Контакты</p>
-      <h2 class="h2" data-i="kt.h">Нужен материал под объект? Напишите</h2>
-      <p class="lead" data-i="kt.l">Ответим в рабочее время, расчёт по вашему списку - в тот же день.</p>
+      <h2 class="h2" data-i="kt.h">Нужен материал под объект? Оставьте заявку</h2>
+      <p class="lead" data-i="kt.l">Перезвоним в рабочее время, расчёт по вашему списку - в тот же день.</p>
     </div>
     <div class="kgrid">
-      <form class="kform rv" id="form" novalidate autocomplete="on">
+      <form class="kform rv" id="zayavka" novalidate autocomplete="on" aria-label="Оставить заявку">
         <label><span data-i="fm.name">Имя</span><input type="text" name="name" required maxlength="60" autocomplete="name"></label>
-        <label><span data-i="fm.phone">Телефон</span><input type="tel" name="phone" required inputmode="tel" autocomplete="tel" placeholder="+7"></label>
-        <label><span data-i="fm.msg">Что нужно и в каком объёме</span><textarea name="msg" rows="3" maxlength="600"></textarea></label>
-        <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="company" tabindex="-1" autocomplete="off"></label></div>
-        <button type="submit" class="btn btn-solid" data-i="fm.send">Отправить в WhatsApp</button>
-        <p class="fm-ok" id="fmok" hidden data-i="fm.ok">Спасибо! Открываем WhatsApp, сообщение уже готово.</p>
-        <p class="fm-err" id="fmerr" hidden data-i="fm.err">Укажите имя и телефон.</p>
+        <label><span data-i="fm.phone">Телефон</span><input type="tel" name="phone" required maxlength="20" inputmode="tel" autocomplete="tel" placeholder="+7 700 000 00 00"></label>
+        <label><span data-i="fm.reason">Причина обращения</span>
+          <select name="Причина обращения" id="reason" required>
+            <option value="" selected disabled data-i="fm.pick">Выберите</option>
+            <option value="Огнезащита" data-k="og" data-i="g.og">Огнезащита</option>
+            <option value="Гидроизоляция" data-k="gi" data-i="g.gi">Гидроизоляция</option>
+            <option value="Эпоксидные полы" data-k="po" data-i="g.po">Эпоксидные полы</option>
+            <option value="Антикоррозия" data-k="ak" data-i="g.ak">Антикоррозия</option>
+            <option value="Растворители" data-k="ra" data-i="g.ra">Растворители</option>
+            <option value="Доставка" data-k="ds" data-i="fm.r.ds">Доставка</option>
+            <option value="Другой вопрос" data-k="other" data-i="fm.r.other">Другой вопрос</option>
+          </select>
+        </label>
+        <label><span data-i="fm.msg">Комментарий: позиция, объём, город</span><textarea name="msg" rows="3" maxlength="600"></textarea></label>
+        <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="hp_extra" tabindex="-1" autocomplete="off"></label></div>
+        <button type="submit" class="btn btn-solid" data-i="fm.send">Отправить заявку</button>
+        <p class="fm-err" id="fmerr" hidden data-i="fm.err">Укажите имя, телефон (10 цифр после +7) и причину обращения.</p>
+        <p class="fm-ok" id="fmok" hidden data-i="fm.ok">Спасибо! Заявка принята - открываем WhatsApp, сообщение уже готово.</p>
+        <p class="fm-note" data-i="fm.note">Нажимая кнопку, вы соглашаетесь, что мы свяжемся с вами по этому номеру. После отправки откроется WhatsApp с текстом заявки.</p>
       </form>
       <div class="kinfo rv">
-        <a class="kphone" href="tel:+77015230974">+7 (701) 523-09-74</a>
-        <a class="kmail" href="mailto:too.tradechem@gmail.com">too.tradechem@gmail.com</a>
-        <p class="kcity" data-i="kt.city">Астана, Казахстан</p>
+        <p class="kphone" data-i="kt.city">Астана, Казахстан</p>
         <p class="kfrom" data-i="kt.geo">Отгрузка со склада в Астане, доставка по всему Казахстану</p>
-        <div class="kbtns">
-          <a class="btn btn-solid" href="#" data-wa="kontakty" data-i="b.wa2">Написать в WhatsApp</a>
-          <a class="btn btn-ghost" href="tel:+77015230974" data-i="b.call">Позвонить</a>
-        </div>
+        <a class="kmail" href="mailto:too.tradechem@gmail.com">too.tradechem@gmail.com</a>
         <a class="ksoc" href="https://www.instagram.com/tradechem2025" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
           <span>Instagram @tradechem2025</span>
@@ -647,10 +636,9 @@
 </footer>
 
 <div class="bar" id="bar">
-  <a href="tel:+77015230974" data-i="b.call">Позвонить</a>
-  <a href="#" data-wa="hero">WhatsApp</a>
+  <a href="#zayavka" data-lead="bar" data-i="b.lead">Оставить заявку</a>
 </div>
 
-<script src="script.js?v=20260908-1" defer></script>
+<script src="script.js?v=20260915-1" defer></script>
 </body>
 </html>
