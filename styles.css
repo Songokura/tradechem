@@ -330,3 +330,10 @@ html[lang="kk"] .nav a{padding:8px 8px;font-size:12.5px}
 .ksoc:hover{color:#fff}
 .fsoc{display:inline-flex;align-items:center;gap:7px;margin-top:10px;color:rgba(255,255,255,.62);font:600 12px/1 var(--ft);text-decoration:none;transition:color .25s}
 .fsoc:hover{color:#fff}
+
+/* кнопка WhatsApp в контактах и ячейка липкой панели (17.09.2026) */
+.kwa{display:inline-flex;align-items:center;gap:10px;margin-top:14px;padding:13px 22px;border-radius:999px;background:#fff;color:#128C4B;font:600 14px/1 var(--ft);text-decoration:none;transition:transform .25s,box-shadow .25s}
+.kwa svg,.bar-wa svg{display:block;flex:0 0 auto}
+.kwa svg{color:#25D366}
+.kwa:hover{transform:translateY(-2px);box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
+.bar a.bar-wa{gap:8px}

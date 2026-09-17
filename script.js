@@ -10,14 +10,20 @@ var RED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 var HAS_IO = typeof IntersectionObserver === "function";
 var root = document.documentElement;
 
-/* ---------------- КОНВЕРСИЯ GOOGLE ADS ----------------
-   Ярлык задан в index.html (window.TC_CONV). Все обращения идут через форму,
-   конверсия одна - успешная отправка заявки. */
+/* ---------------- КОНВЕРСИИ GOOGLE ADS ----------------
+   Ярлыки заданы в index.html (window.TC_CONV). Основная - отправка заявки,
+   клик по кнопке WhatsApp - дополнительная (контакт). */
 function conv(key){
   var id = (window.TC_CONV || {})[key];
   if (!id || typeof window.gtag !== "function") return;
   window.gtag("event", "conversion", {send_to: id, value: 1.0, currency: "USD"});
 }
+
+/* клик по кнопке WhatsApp; окно после отправки формы открывается через window.open и сюда не попадает */
+document.addEventListener("click", function(e){
+  var a = e.target.closest ? e.target.closest('a[href*="wa.me/"]') : null;
+  if (a) conv("contact");
+});
 
 /* ---------------- КАЗАХСКИЙ СЛОВАРЬ ----------------
    Лежит в assets/lang/kk.js и грузится только когда человек сам выбрал KZ
@@ -38,7 +44,7 @@ function loadKK(done){
 }
 
 /* тексты заявки, которая уходит в WhatsApp после отправки формы */
-var MSG_RU = {hello:"Здравствуйте! Заявка с сайта TradeChem.", reason:"Причина", name:"Имя", phone:"Телефон", note:"Комментарий", item:"Позиция: {n} ({t})"};
+var MSG_RU = {hello:"Здравствуйте! Заявка с сайта TradeChem.", reason:"Причина", name:"Имя", phone:"Телефон", note:"Комментарий", item:"Позиция: {n} ({t})", area:"Площадь объекта"};
 function MSG(){ return (curLang() === "kk" && KK && KK.msg) ? KK.msg : MSG_RU; }
 
 var TICK = ["Protherma O","Protherma ВД","Protherma O-AC","Грунт-эмаль 3 в 1","ПФ-115","ГФ-021","POLY TOP","Rubber Master","Aqua Fix-01","ХВ-785","ХС-010","Растворитель 646","Р-4","Смывка PR-10"];
@@ -422,7 +428,7 @@ document.addEventListener("click", function(e){
   }, 800);
 });
 
-/* ---------------- ФОРМА: имя, телефон и причина обязательны ---------------- */
+/* ---------------- ФОРМА: обязателен только телефон ---------------- */
 function normPhone(v){
   var d = String(v || "").replace(/\D/g, "");
   if (d.length === 11 && d.charAt(0) === "8") d = "7" + d.slice(1);
@@ -433,9 +439,7 @@ function normPhone(v){
 if (form) {
   var fmOk = document.getElementById("fmok"), fmErr = document.getElementById("fmerr");
   var checks = [
-    [form.name,   function(){ return form.name.value.trim().length >= 2; }],
-    [form.phone,  function(){ return !!normPhone(form.phone.value); }],
-    [form.reason, function(){ return !!form.reason.value; }]
+    [form.phone,  function(){ return !!normPhone(form.phone.value); }]
   ];
   checks.forEach(function(c){
     var ev = c[0].tagName === "SELECT" ? "change" : "input";
@@ -466,10 +470,13 @@ if (form) {
 
   form.addEventListener("submit", function(e){
     e.preventDefault();
-    var M = MSG(), opt = form.reason.options[form.reason.selectedIndex];
-    var parts = [M.hello, M.reason + ": " + opt.textContent.trim()];
+    var M = MSG(), parts = [M.hello];
+    [[form.reason, M.reason], [form.area, M.area || "Площадь объекта"]].forEach(function(x){
+      if (x[0] && x[0].value) parts.push(x[1] + ": " + x[0].options[x[0].selectedIndex].textContent.trim());
+    });
     if (form.msg.value.trim()) parts.push(M.note + ": " + form.msg.value.trim());
-    parts.push(M.name + ": " + form.name.value, M.phone + ": " + form.phone.value);
+    if (form.name.value) parts.push(M.name + ": " + form.name.value);
+    parts.push(M.phone + ": " + form.phone.value);
     fmErr.hidden = true; fmOk.hidden = false;
     /* Google Ads: конверсия «Отправка формы для потенциальных клиентов» */
     conv("lead");

@@ -14,10 +14,11 @@
   gtag('js', new Date());
   gtag('config', 'AW-18437463192');
 
-  /* Ярлык конверсии Google Ads - используется в script.js. Все обращения идут через форму,
-     поэтому считается только отправка заявки. */
+  /* Ярлыки конверсий Google Ads - используются в script.js. Основная цель - отправка заявки,
+     клик по WhatsApp считается дополнительной целью (в кабинете не основная). */
   window.TC_CONV = {
-    lead: 'AW-18437463192/n4ceCMOLkvEcEJi51ddE'  /* Отправка формы для потенциальных клиентов */
+    lead: 'AW-18437463192/n4ceCMOLkvEcEJi51ddE',   /* Отправка формы для потенциальных клиентов */
+    contact: 'AW-18437463192/fPLBCI7Hk_EcEJi51ddE' /* Контакт: клик по WhatsApp, дополнительная */
   };
 </script>
 <script src="https://lead-bot.sultan-askarov-kz.workers.dev/t.js" data-site="tradechem" defer></script>
@@ -42,7 +43,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tektur:wght@600;800&family=Golos+Text:wght@400;600&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/photo/hero.webp" fetchpriority="high">
-<link rel="stylesheet" href="styles.css?v=20260915-1">
+<link rel="stylesheet" href="styles.css?v=20260917-1">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -69,6 +70,7 @@
 </script>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="ic-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></symbol></svg>
 
 <header class="hdr" id="hdr">
   <div class="hdr-in">
@@ -583,15 +585,15 @@
     <div class="shead rv">
       <p class="kick" data-i="kt.k">Контакты</p>
       <h2 class="h2" data-i="kt.h">Нужен материал под объект? Оставьте заявку</h2>
-      <p class="lead" data-i="kt.l">Перезвоним в рабочее время, расчёт по вашему списку - в тот же день.</p>
+      <p class="lead" data-i="kt.l">Поставки для объектов от 100 м², расчёт по вашему списку - в тот же день.</p>
     </div>
     <div class="kgrid">
       <form class="kform rv" id="zayavka" novalidate autocomplete="on" aria-label="Оставить заявку">
-        <label><span data-i="fm.name">Имя</span><input type="text" name="name" required maxlength="60" autocomplete="name"></label>
+        <label><span data-i="fm.name">Имя</span><input type="text" name="name" maxlength="60" autocomplete="name"></label>
         <label><span data-i="fm.phone">Телефон</span><input type="tel" name="phone" required maxlength="20" inputmode="tel" autocomplete="tel" placeholder="+7 700 000 00 00"></label>
         <label><span data-i="fm.reason">Причина обращения</span>
-          <select name="Причина обращения" id="reason" required>
-            <option value="" selected disabled data-i="fm.pick">Выберите</option>
+          <select name="Причина обращения" id="reason">
+            <option value="" selected data-i="fm.pick">Выберите</option>
             <option value="Огнезащита" data-k="og" data-i="g.og">Огнезащита</option>
             <option value="Гидроизоляция" data-k="gi" data-i="g.gi">Гидроизоляция</option>
             <option value="Эпоксидные полы" data-k="po" data-i="g.po">Эпоксидные полы</option>
@@ -601,16 +603,26 @@
             <option value="Другой вопрос" data-k="other" data-i="fm.r.other">Другой вопрос</option>
           </select>
         </label>
+        <label><span data-i="fm.area">Площадь объекта</span>
+          <select name="Площадь объекта" id="area">
+            <option value="" selected data-i="fm.pick">Выберите</option>
+            <option value="до 100 м²" data-i="fm.a1">до 100 м²</option>
+            <option value="100-500 м²" data-i="fm.a2">100-500 м²</option>
+            <option value="от 500 м²" data-i="fm.a3">от 500 м²</option>
+            <option value="Пока не знаю" data-i="fm.a0">Пока не знаю</option>
+          </select>
+        </label>
         <label><span data-i="fm.msg">Комментарий: позиция, объём, город</span><textarea name="msg" rows="3" maxlength="600"></textarea></label>
         <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="hp_extra" tabindex="-1" autocomplete="off"></label></div>
         <button type="submit" class="btn btn-solid" data-i="fm.send">Отправить заявку</button>
-        <p class="fm-err" id="fmerr" hidden data-i="fm.err">Укажите имя, телефон (10 цифр после +7) и причину обращения.</p>
+        <p class="fm-err" id="fmerr" hidden data-i="fm.err">Укажите телефон: 10 цифр после +7.</p>
         <p class="fm-ok" id="fmok" hidden data-i="fm.ok">Спасибо! Заявка принята - открываем WhatsApp, сообщение уже готово.</p>
         <p class="fm-note" data-i="fm.note">Нажимая кнопку, вы соглашаетесь, что мы свяжемся с вами по этому номеру. После отправки откроется WhatsApp с текстом заявки.</p>
       </form>
       <div class="kinfo rv">
         <p class="kphone" data-i="kt.city">Астана, Казахстан</p>
         <p class="kfrom" data-i="kt.geo">Отгрузка со склада в Астане, доставка по всему Казахстану</p>
+        <a class="kwa" href="https://wa.me/77713203740" target="_blank" rel="noopener"><svg width="20" height="20" aria-hidden="true"><use href="#ic-wa"/></svg><span data-i="b.wa">Написать в WhatsApp</span></a>
         <a class="kmail" href="mailto:too.tradechem@gmail.com">too.tradechem@gmail.com</a>
         <a class="ksoc" href="https://www.instagram.com/tradechem2025" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
@@ -636,9 +648,10 @@
 </footer>
 
 <div class="bar" id="bar">
+  <a class="bar-wa" href="https://wa.me/77713203740" target="_blank" rel="noopener" aria-label="WhatsApp"><svg width="18" height="18" aria-hidden="true"><use href="#ic-wa"/></svg><span>WhatsApp</span></a>
   <a href="#zayavka" data-lead="bar" data-i="b.lead">Оставить заявку</a>
 </div>
 
-<script src="script.js?v=20260915-1" defer></script>
+<script src="script.js?v=20260917-1" defer></script>
 </body>
 </html>
