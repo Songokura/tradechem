@@ -43,7 +43,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tektur:wght@600;800&family=Golos+Text:wght@400;600&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/photo/hero.webp" fetchpriority="high">
-<link rel="stylesheet" href="styles.css?v=20260917-2">
+<link rel="stylesheet" href="styles.css?v=20260921-1">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -127,9 +127,24 @@
       <h1 class="h1"><span class="l1" data-i="h.h1a">Защитные</span><b class="l2" data-i="h.h1b">покрытия</b></h1>
       <p class="h-sub" data-i="h.sub">Огнезащита · антикоррозия · гидроизоляция · наливные полы</p>
       <p class="lead lead-w" data-i="h.lead">Тары от 15-30 кг. ГОСТ и СТ-KZ, прямые поставки с заводов Казахстана и России, доставка по всему Казахстану.</p>
-      <div class="btns">
-        <a class="btn btn-solid" href="#zayavka" data-lead="hero" data-i="b.lead">Оставить заявку</a>
-        <a class="btn btn-ghost btn-ghost-w" href="#katalog" data-i="b.cat">Каталог</a>
+      <div class="hf-wrap">
+        <form class="hform" id="zayavka-top" novalidate autocomplete="on" aria-label="Быстрая заявка" data-i-aria="hf.aria">
+          <select name="Причина обращения" aria-label="Что нужно" data-i-aria="hf.what">
+            <option value="" selected data-i="hf.pick">Что нужно</option>
+            <option value="Огнезащита" data-k="og" data-i="g.og">Огнезащита</option>
+            <option value="Гидроизоляция" data-k="gi" data-i="g.gi">Гидроизоляция</option>
+            <option value="Эпоксидные полы" data-k="po" data-i="g.po">Эпоксидные полы</option>
+            <option value="Антикоррозия" data-k="ak" data-i="g.ak">Антикоррозия</option>
+            <option value="Растворители" data-k="ra" data-i="g.ra">Растворители</option>
+            <option value="Другой вопрос" data-k="other" data-i="fm.r.other">Другой вопрос</option>
+          </select>
+          <input type="tel" name="phone" required maxlength="20" inputmode="tel" autocomplete="tel" placeholder="+7 700 000 00 00" aria-label="Телефон" data-i-aria="fm.phone">
+          <button type="submit" class="btn btn-solid" data-i="hf.send">Получить расчёт</button>
+          <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="hp_extra" tabindex="-1" autocomplete="off"></label></div>
+        </form>
+        <p class="hf-msg hf-err" id="hferr" hidden data-i="fm.err">Укажите телефон: 10 цифр после +7.</p>
+        <p class="hf-msg hf-ok" id="hfok" hidden data-i="fm.ok">Спасибо! Заявка принята - открываем WhatsApp, сообщение уже готово.</p>
+        <p class="hf-note"><span data-i="hf.note">Пришлём расчёт с ценами в рабочее время.</span> <a class="hf-cat" href="#katalog" data-i="b.cat">Каталог</a></p>
       </div>
     </div>
     <div class="tk" aria-hidden="true"><div class="tk-in" id="ticker"></div></div>
@@ -652,6 +667,6 @@
   <a href="#zayavka" data-lead="bar" data-i="b.lead">Оставить заявку</a>
 </div>
 
-<script src="script.js?v=20260917-2" defer></script>
+<script src="script.js?v=20260921-1" defer></script>
 </body>
 </html>

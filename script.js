@@ -276,7 +276,18 @@ if (HAS_IO) {
   if (more) more.addEventListener("click", function(){
     expanded = true; apply("all");
   });
-  apply("all");
+  /* ?cat=og|gi|po|ak|ra - объявление ведёт сразу в нужный отдел каталога:
+     фильтр включён до первого экрана, а в быстрой форме героя уже выбрано направление. */
+  var cat = (new URLSearchParams(location.search).get("cat") || "").toLowerCase().replace(/[^a-z]/g, "");
+  var b0 = cat && fl.querySelector('button[data-g="' + cat + '"]');
+  if (b0){
+    fl.querySelectorAll("button").forEach(function(x){ x.classList.toggle("is-on", x === b0); });
+    apply(cat);
+    var hf = document.getElementById("zayavka-top");
+    var sel = hf && hf.elements["Причина обращения"];
+    var opt = sel && sel.querySelector('option[data-k="' + cat + '"]');
+    if (opt) sel.value = opt.value;
+  } else apply("all");
 })();
 
 /* ---------------- КАРТОЧКИ ТОВАРА ИЗ GOOGLE-ТАБЛИЦЫ ----------------
@@ -428,7 +439,10 @@ document.addEventListener("click", function(e){
   }, 800);
 });
 
-/* ---------------- ФОРМА: обязателен только телефон ---------------- */
+/* ---------------- ФОРМА: обязателен только телефон ----------------
+   Форм на странице две: быстрая в герое (телефон + направление) и полная в контактах.
+   Обе - настоящие <form> с submit, обе шлют конверсию и открывают WhatsApp,
+   поэтому LeadBot видит их одинаково и склеивает с перепиской. */
 function normPhone(v){
   var d = String(v || "").replace(/\D/g, "");
   if (d.length === 11 && d.charAt(0) === "8") d = "7" + d.slice(1);
@@ -436,54 +450,57 @@ function normPhone(v){
   if (d.length !== 11 || d.charAt(0) !== "7") return "";
   return "+7 " + d.slice(1, 4) + " " + d.slice(4, 7) + " " + d.slice(7, 9) + " " + d.slice(9, 11);
 }
-if (form) {
-  var fmOk = document.getElementById("fmok"), fmErr = document.getElementById("fmerr");
-  var checks = [
-    [form.phone,  function(){ return !!normPhone(form.phone.value); }]
-  ];
-  checks.forEach(function(c){
-    var ev = c[0].tagName === "SELECT" ? "change" : "input";
-    c[0].addEventListener(ev, function(){
-      if (c[1]()) c[0].classList.remove("is-bad");
-      if (!fmErr.hidden && checks.every(function(x){ return x[1](); })) fmErr.hidden = true;
-    });
-  });
-  form.phone.addEventListener("input", function(){
-    var v = form.phone.value.replace(/[^\d+()\-\s]/g, "");
-    if (v !== form.phone.value) form.phone.value = v;
+function fld(f, n){ return f.elements[n] || null; }
+
+function wireForm(f, okEl, errEl){
+  if (!f) return;
+  var phone = fld(f, "phone");
+  if (!phone) return;
+  function good(){ return !!normPhone(phone.value); }
+  phone.addEventListener("input", function(){
+    var v = phone.value.replace(/[^\d+()\-\s]/g, "");
+    if (v !== phone.value) phone.value = v;
+    if (good()){ phone.classList.remove("is-bad"); if (errEl) errEl.hidden = true; }
   });
   /* Проверка на window в фазе захвата - раньше трекера LeadBot (он слушает submit на document).
      Незаполненная заявка и бот-ловушка не доходят ни до бота, ни до Google Ads. */
   window.addEventListener("submit", function(e){
-    if (e.target !== form) return;
-    if (form.hp_extra && form.hp_extra.value) { e.preventDefault(); e.stopPropagation(); return; }
-    var bad = checks.filter(function(c){ var ok = c[1](); c[0].classList.toggle("is-bad", !ok); return !ok; });
-    if (bad.length) {
+    if (e.target !== f) return;
+    var hp = fld(f, "hp_extra");
+    if (hp && hp.value) { e.preventDefault(); e.stopPropagation(); return; }
+    if (!good()){
       e.preventDefault(); e.stopPropagation();
-      fmErr.hidden = false; fmOk.hidden = true;
-      bad[0][0].focus();
+      phone.classList.add("is-bad");
+      if (errEl) errEl.hidden = false;
+      if (okEl) okEl.hidden = true;
+      phone.focus();
       return;
     }
-    form.name.value = form.name.value.trim();
-    form.phone.value = normPhone(form.phone.value);   /* в бот уходит номер в едином виде */
+    var nm = fld(f, "name");
+    if (nm) nm.value = nm.value.trim();
+    phone.value = normPhone(phone.value);   /* в бот уходит номер в едином виде */
   }, true);
 
-  form.addEventListener("submit", function(e){
+  f.addEventListener("submit", function(e){
     e.preventDefault();
     var M = MSG(), parts = [M.hello];
-    [[form.reason, M.reason], [form.area, M.area || "Площадь объекта"]].forEach(function(x){
+    [[fld(f, "Причина обращения"), M.reason], [fld(f, "Площадь объекта"), M.area || "Площадь объекта"]].forEach(function(x){
       if (x[0] && x[0].value) parts.push(x[1] + ": " + x[0].options[x[0].selectedIndex].textContent.trim());
     });
-    if (form.msg.value.trim()) parts.push(M.note + ": " + form.msg.value.trim());
-    if (form.name.value) parts.push(M.name + ": " + form.name.value);
-    parts.push(M.phone + ": " + form.phone.value);
-    fmErr.hidden = true; fmOk.hidden = false;
+    var msg = fld(f, "msg"), nm = fld(f, "name");
+    if (msg && msg.value.trim()) parts.push(M.note + ": " + msg.value.trim());
+    if (nm && nm.value) parts.push(M.name + ": " + nm.value);
+    parts.push(M.phone + ": " + phone.value);
+    if (errEl) errEl.hidden = true;
+    if (okEl) okEl.hidden = false;
     /* Google Ads: конверсия «Отправка формы для потенциальных клиентов» */
     conv("lead");
     /* WhatsApp сразу после отправки - LeadBot склеивает форму и WhatsApp в одно обращение */
     window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(parts.join("\n")), "_blank", "noopener");
   });
 }
+wireForm(form, document.getElementById("fmok"), document.getElementById("fmerr"));
+wireForm(document.getElementById("zayavka-top"), document.getElementById("hfok"), document.getElementById("hferr"));
 
 /* ---------------- СТАРТ ---------------- */
 snapshot();

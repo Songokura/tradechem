@@ -46,6 +46,28 @@ h1,h2,h3,p{margin:0}
 .btn-ghost-w{border-color:rgba(255,255,255,.5);color:#fff}
 .btn-ghost-w:hover{border-color:#fff;background:rgba(255,255,255,.08)}
 .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+/* ---- быстрая заявка в герое: телефон и направление прямо на первом экране ---- */
+.hf-wrap{width:min(720px,100%);display:grid;gap:10px;justify-items:center}
+.hform{width:100%;display:grid;grid-template-columns:minmax(150px,.85fr) minmax(170px,1fr) auto;gap:8px;
+  background:rgba(20,21,15,.42);border:1px solid rgba(244,243,238,.26);border-radius:16px;padding:8px}
+.hform select,.hform input[type=tel]{width:100%;border:1px solid rgba(20,21,15,.12);background:#fff;border-radius:10px;
+  padding:13px 14px;font:400 15px/1.4 var(--ft);color:var(--ink);transition:border-color .2s,box-shadow .2s}
+.hform select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:38px;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%23797746' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat right 14px center}
+.hform select:invalid{color:var(--steel)}
+.hform option{color:var(--ink)}
+.hform select:focus,.hform input:focus{outline:0;border-color:var(--olive);box-shadow:0 0 0 3px rgba(121,119,70,.24)}
+.hform .is-bad{border-color:var(--rust);box-shadow:0 0 0 3px rgba(180,85,31,.2)}
+.hform .btn{min-width:0;white-space:nowrap;padding-left:22px;padding-right:22px}
+.hf-msg{font:600 12px/1.4 var(--ft);margin:0;text-align:center}
+.hf-msg[hidden]{display:none}
+.hf-err{color:#FFD9C7}
+.hf-ok{color:#E4EFCB}
+.hf-note{font:400 13px/1.5 var(--ft);color:rgba(244,243,238,.78);margin:0;text-align:center}
+.hf-note .hf-cat{color:#fff;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:1px;margin-left:6px}
+.hf-note .hf-cat:hover{border-bottom-color:#fff}
+@media(max-width:760px){.hform{grid-template-columns:1fr;gap:8px}.hform .btn{width:100%}}
+@media(max-width:600px){.hero .lead{display:none}}
 .btns .btn{min-width:230px}
 @media(max-width:480px){.btns{flex-direction:column;align-items:stretch}.btns .btn{width:100%}}
 
@@ -127,7 +149,7 @@ html.no-plate .plate::after{display:none}
 /* интро героя: фронт наплывает снизу, текст поднимается (JS ведёт --f) */
 .hero .txt > *{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
 .hero.on .txt > *,html.no-intro .hero .txt > *{opacity:1;transform:none}
-.hero .txt > :nth-child(1){transition-delay:.35s}.hero .txt > :nth-child(2){transition-delay:.5s}.hero .txt > :nth-child(3){transition-delay:.65s}.hero .txt > :nth-child(4){transition-delay:.78s}.hero .txt > :nth-child(5){transition-delay:.9s}
+.hero .txt > :nth-child(1){transition-delay:.35s}.hero .txt > :nth-child(2){transition-delay:.5s}.hero .txt > :nth-child(3){transition-delay:.65s}.hero .txt > :nth-child(4){transition-delay:.78s}.hero .txt > :nth-child(5){transition-delay:.9s}.hero .txt > :nth-child(6){transition-delay:1.02s}
 html.no-intro .hero .txt > *{transition-delay:0s}
 
 /* фото-плиты: тот же фронт, прогресс --open */
