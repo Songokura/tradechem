@@ -1,6 +1,6 @@
 /* ============================================================
    TRADECHEM - скрипт страницы.
-   Плиты и фронт покрытия · перевод RU/KZ · меню · лента · каталог ·
+   Плиты и проход валика · перевод RU/KZ · меню · каталог · цены из таблицы ·
    кнопки «Оставить заявку» → форма → WhatsApp. Библиотек нет.
    ============================================================ */
 (function(){
@@ -47,8 +47,6 @@ function loadKK(done){
 var MSG_RU = {hello:"Здравствуйте! Заявка с сайта TradeChem.", reason:"Причина", name:"Имя", phone:"Телефон", note:"Комментарий", item:"Позиция: {n} ({t})", area:"Площадь объекта"};
 function MSG(){ return (curLang() === "kk" && KK && KK.msg) ? KK.msg : MSG_RU; }
 
-var TICK = ["Protherma O","Protherma ВД","Protherma O-AC","Грунт-эмаль 3 в 1","ПФ-115","ГФ-021","POLY TOP","Rubber Master","Aqua Fix-01","ХВ-785","ХС-010","Растворитель 646","Р-4","Смывка PR-10"];
-
 /* ---------------- ПЕРЕВОД ---------------- */
 var RU = {};
 function snapshot(){
@@ -83,7 +81,6 @@ function applyLang(lang){
     b.setAttribute("aria-pressed", on ? "true" : "false");
   });
   try { localStorage.setItem("tc-lang", kk ? "kk" : "ru"); } catch(e){}
-  fillTicker();
   renderPrices();
   requestAnimationFrame(fitText);
 }
@@ -106,7 +103,7 @@ document.querySelectorAll(".lang button").forEach(function(b){
 
 /* дисплейные строки: казахский длиннее - ужимаем, пока не влезет */
 function fitText(){
-  document.querySelectorAll(".h1 .l1, .h1 .l2, .kphone").forEach(function(el){
+  document.querySelectorAll(".h1 span, .kcity").forEach(function(el){
     el.style.fontSize = "";
     var box = el.parentElement.clientWidth;
     if (!box) return;
@@ -117,24 +114,9 @@ function fitText(){
     }
   });
 }
-
-/* ---------------- БЕГУЩАЯ ЛЕНТА ----------------
-   Копий столько, чтобы дорожка была шире двух экранов; шаг цикла - одна копия. */
-function fillTicker(){
-  var el = document.getElementById("ticker"); if (!el) return;
-  var list = (curLang() === "kk" && KK && KK.tick) ? KK.tick : TICK;
-  var one = list.map(function(t){ return "<b>" + t + "</b>"; }).join("");
-  el.innerHTML = one;
-  var w = el.scrollWidth || 1000;
-  var need = Math.max(2, Math.ceil((innerWidth * 2) / w) + 1);
-  var html = "";
-  for (var i = 0; i < need; i++) html += one;
-  el.innerHTML = html;
-  el.style.setProperty("--tkw", w + "px");
-}
-var tkTimer;
-addEventListener("resize", function(){ clearTimeout(tkTimer); tkTimer = setTimeout(function(){ fillTicker(); fitText(); }, 200); });
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ fillTicker(); fitText(); });
+var ftTimer;
+addEventListener("resize", function(){ clearTimeout(ftTimer); ftTimer = setTimeout(fitText, 200); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitText);
 
 /* ---------------- МЕНЮ ---------------- */
 var burger = document.getElementById("burger");
@@ -158,15 +140,16 @@ document.addEventListener("click", function(e){
   var t = document.getElementById(id); if (!t) return;
   e.preventDefault();
   closeMenu();
+  if (a.dataset.cat) setFilter(a.dataset.cat);
   var top = t.getBoundingClientRect().top + scrollY - (t.classList.contains("pw") ? 0 : HH() + 12);
   scrollTo({ top: Math.max(0, top), behavior: RED ? "auto" : "smooth" });
   try { history.pushState(null, "", "#" + id); } catch(err){}
 });
 
-/* ---------------- ПЛИТЫ И ФРОНТ ПОКРЫТИЯ ----------------
-   Один слушатель scroll через rAF. На каждую обёртку .pw пишем
-   --enter / --exit / --stay и --open (фронт), герою ещё --f.
-   Дальше всё делает CSS через calc. */
+/* ---------------- ПЛИТЫ И ПРОХОД ВАЛИКА ----------------
+   Один слушатель scroll через rAF: геометрия всех .pw читается пакетом,
+   потом пишутся CSS-переменные --enter / --exit / --stay / --open, герою ещё --f.
+   Дальше всё делает CSS через calc и clip-path. */
 var pws = [].slice.call(document.querySelectorAll(".pw"));
 var heroPw = document.getElementById("top");
 var hero = heroPw ? heroPw.querySelector(".hero") : null;
@@ -175,35 +158,32 @@ var kont = document.getElementById("kontakty");
 var introK = 1, introDone = true;       /* 0..1 - ход интро; introDone - интро закончено или отменено */
 function clamp(v){ return v < 0 ? 0 : (v > 1 ? 1 : v); }
 function easeOut(t){ return 1 - Math.pow(1 - t, 2.4); }
-function easeInOut(t){ return t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2; }
 function update(){
   var H = innerHeight || root.clientHeight;
-  pws.forEach(function(pw){
-    var r = pw.getBoundingClientRect();
+  var rects = pws.map(function(pw){ return pw.getBoundingClientRect(); });   /* чтение пакетом */
+  var kTop = kont ? kont.getBoundingClientRect().top : Infinity;
+  pws.forEach(function(pw, i){
+    var r = rects[i];
     var enter = clamp(1 - r.top / H);
     var exit  = clamp(1 - r.bottom / H);
     var stay  = r.height > H + 1 ? clamp(-r.top / (r.height - H)) : enter;
     pw.style.setProperty("--enter", enter.toFixed(3));
     pw.style.setProperty("--exit",  exit.toFixed(3));
     pw.style.setProperty("--stay",  stay.toFixed(3));
-    pw.style.setProperty("--open",  easeOut(clamp((enter - 0.22) / 0.62)).toFixed(3));
+    /* валик снимает грунт с самого въезда плиты (enter .18 → .8): нераскрытый грунт не занимает больше четверти экрана */
+    pw.style.setProperty("--open",  easeOut(clamp((enter - 0.18) / 0.62)).toFixed(3));
     pw.classList.toggle("gone", exit >= 1);
     pw.classList.toggle("on", enter > 0.62);
-    if (pw === heroPw) {
-      var f = easeInOut(clamp(stay * 1.35)) - 0.8 * (1 - introK);
-      pw.style.setProperty("--f", f.toFixed(3));
-    }
+    if (pw === heroPw) pw.style.setProperty("--f", introK.toFixed(3));
   });
   /* липкая панель: после 55 % первого экрана, прячется на контактах */
-  if (bar) {
-    var onKont = kont && kont.getBoundingClientRect().top < H * 0.6;
-    bar.classList.toggle("show", scrollY > H * 0.55 && !onKont);
-  }
+  if (bar) bar.classList.toggle("show", scrollY > H * 0.55 && !(kTop < H * 0.6));
 }
 if (RED) {
   root.classList.add("no-plate");
   root.classList.add("no-intro");
   if (hero) hero.classList.add("on");
+  if (heroPw) heroPw.classList.add("on");
 } else {
   var tick = false;
   addEventListener("scroll", function(){
@@ -212,7 +192,7 @@ if (RED) {
   }, {passive:true});
   addEventListener("resize", update);
   addEventListener("load", update);
-  /* интро: фронт покрытия наплывает снизу 1300 мс; пропускаем при хэше / прокрутке */
+  /* интро: валик проходит по первому экрану 1300 мс; пропускаем при хэше / прокрутке */
   var skip = location.hash || scrollY > 80;
   if (skip) {
     root.classList.add("no-intro");
@@ -225,13 +205,13 @@ if (RED) {
       if (introDone) return;
       if (t0 === null) t0 = ts;
       var p = clamp((ts - t0) / 1300);
-      introK = easeOut(p);
+      introK = p;                       /* полосы сами сглажены через clamp в CSS */
       update();
       if (p < 1) requestAnimationFrame(step);
       else { introDone = true; if (hero) hero.classList.add("on"); }
     };
     requestAnimationFrame(step);
-    setTimeout(function(){ if (hero) hero.classList.add("on"); }, 700);
+    setTimeout(function(){ if (hero) hero.classList.add("on"); }, 450);
   }
 }
 window.plateSync = function(){ introDone = true; introK = 1; if (hero) hero.classList.add("on"); update(); };
@@ -251,7 +231,10 @@ if (HAS_IO) {
   document.querySelectorAll(".rv").forEach(function(el){ el.classList.add("in"); });
 }
 
-/* ---------------- КАТАЛОГ: фильтр и «показать все» ---------------- */
+/* ---------------- КАТАЛОГ: фильтр и «показать все» ----------------
+   Группы og / gi / po / ak / ra - по data-g карточки. Группа gr («Грунтовки») -
+   сборная: показывает карточки с атрибутом data-primer, data-g у них не меняется. */
+var setFilter = function(){};
 (function(){
   var fl = document.getElementById("filters"), grid = document.getElementById("grid"), more = document.getElementById("more");
   if (!fl || !grid) return;
@@ -260,7 +243,7 @@ if (HAS_IO) {
   function apply(g){
     var shown = 0;
     cards.forEach(function(c){
-      var ok = g === "all" || c.dataset.g === g;
+      var ok = g === "all" || c.dataset.g === g || (g === "gr" && c.hasAttribute("data-primer"));
       c.hidden = !ok;
       if (ok) { shown++; c.classList.toggle("more-hide", g === "all" && !expanded && shown > MOB); }
       else c.classList.remove("more-hide");
@@ -268,21 +251,23 @@ if (HAS_IO) {
     });
     if (more) more.parentElement.classList.toggle("done", g !== "all" || expanded);
   }
+  setFilter = function(g){
+    var b = fl.querySelector('button[data-g="' + g + '"]'); if (!b) return false;
+    fl.querySelectorAll("button").forEach(function(x){ x.classList.toggle("is-on", x === b); });
+    apply(g);
+    return true;
+  };
   fl.addEventListener("click", function(e){
     var b = e.target.closest("button[data-g]"); if (!b) return;
-    fl.querySelectorAll("button").forEach(function(x){ x.classList.toggle("is-on", x === b); });
-    apply(b.dataset.g);
+    setFilter(b.dataset.g);
   });
   if (more) more.addEventListener("click", function(){
     expanded = true; apply("all");
   });
-  /* ?cat=og|gi|po|ak|ra - объявление ведёт сразу в нужный отдел каталога:
+  /* ?cat=og|ak|gr|gi|po|ra|all - объявление ведёт сразу в нужный отдел каталога:
      фильтр включён до первого экрана, а в быстрой форме героя уже выбрано направление. */
   var cat = (new URLSearchParams(location.search).get("cat") || "").toLowerCase().replace(/[^a-z]/g, "");
-  var b0 = cat && fl.querySelector('button[data-g="' + cat + '"]');
-  if (b0){
-    fl.querySelectorAll("button").forEach(function(x){ x.classList.toggle("is-on", x === b0); });
-    apply(cat);
+  if (cat && setFilter(cat)){
     var hf = document.getElementById("zayavka-top");
     var sel = hf && hf.elements["Причина обращения"];
     var opt = sel && sel.querySelector('option[data-k="' + cat + '"]');
@@ -324,7 +309,7 @@ function csvRows(t){
 /* Число из человеческого ввода: «4 200», «3850,50», «5100 тг» → 4200 / 3850.5 / 5100.
    Текст без цифр («да», пусто) → 0. */
 function num(x){
-  var raw = String(x == null ? "" : x).replace(/[\s\u00a0]/g, "").replace(",", ".").replace(/[^\d.]/g, "");
+  var raw = String(x == null ? "" : x).replace(/[\s ]/g, "").replace(",", ".").replace(/[^\d.]/g, "");
   var v = parseFloat(raw);
   return isFinite(v) && v > 0 ? v : 0;
 }
@@ -352,7 +337,7 @@ function parsePrices(rows){
 function money(n){
   var r = Math.round(n * 100) / 100;
   var s = (r % 1 ? r.toFixed(2) : r.toFixed(0)).split("."), int = s[0];
-  return int.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + (s[1] ? "," + s[1] : "");
+  return int.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + (s[1] ? "," + s[1] : "");
 }
 /* Тара в казахской версии: «от 175 кг» → «175 кг-нан» (суффикс из kk.js). */
 function taraTxt(t, kk){
